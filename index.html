@@ -786,6 +786,7 @@
 
         // Kunci penyimpanan sementara di browser (cache offline)
         const DB_USERS_KEY = 'juz30_all_students_db';
+        const DB_LOGIN_USERS_KEY = 'juz30_login_users_db';
         const SESSION_KEY = 'juz30_active_session';
 
         // Daftar lengkap 37 Surat dalam Juz 30 (Surat ke-78 sampai ke-114)
@@ -832,6 +833,15 @@
         // State Sesi & Cache Database
         let currentSession = safeStorageGet(SESSION_KEY, null);
         let allStudentsCache = safeStorageGet(DB_USERS_KEY, {});
+        let loginUsersCache = safeStorageGet(DB_LOGIN_USERS_KEY, []);
+
+        /**
+         * Mengecek apakah siswa sudah memiliki setoran hafalan (minimal 1 surat berstatus 'proses' atau 'hafal')
+         */
+        function hasStudentSetoran(student) {
+            if (!student || !student.progress) return false;
+            return Object.values(student.progress).some(status => status === 'hafal' || status === 'proses');
+        }
 
         // State Aplikasi Utama
         let appState = {
@@ -1104,7 +1114,7 @@
         // ========================================================================
 
         /**
-         * Mengambil seluruh data siswa terbaru dari Google Spreadsheet (HTTP GET)
+         * Mengambil seluruh data siswa dan daftar akun login dari Google Spreadsheet (HTTP GET)
          */
         async function fetchAllStudentsFromSheet() {
             if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
@@ -1116,6 +1126,10 @@
                 if (result.status === 'success' && result.students) {
                     allStudentsCache = result.students;
                     safeStorageSet(DB_USERS_KEY, allStudentsCache);
+                    if (Array.isArray(result.users)) {
+                        loginUsersCache = result.users;
+                        safeStorageSet(DB_LOGIN_USERS_KEY, loginUsersCache);
+                    }
                     return allStudentsCache;
                 }
             } catch (error) {
@@ -1201,17 +1215,62 @@
             return `${name.trim().toLowerCase().replace(/\s+/g, '_')}__${kelas.trim().toLowerCase().replace(/\s+/g, '')}`;
         }
 
+        /**
+         * Mencocokkan kredensial login dengan data dari sheet 'PenggunaLogin' di Spreadsheet
+         */
+        function verifyUserFromSheet(role, name, password, kelas = '') {
+            if (!Array.isArray(loginUsersCache) || loginUsersCache.length === 0) {
+                return { matched: false, hasSheetUsers: false };
+            }
+            const roleUsers = loginUsersCache.filter(u => (u.role || '').toLowerCase() === role);
+            if (roleUsers.length === 0) {
+                return { matched: false, hasSheetUsers: false };
+            }
+
+            const found = roleUsers.find(u => {
+                const sameName = (u.name || '').trim().toLowerCase() === name.trim().toLowerCase();
+                const samePass = String(u.password || '').trim() === String(password || '').trim();
+                const sameKelas = !kelas || (u.kelas || '').trim().toUpperCase() === kelas.trim().toUpperCase();
+                return sameName && samePass && sameKelas;
+            });
+
+            return { matched: !!found, hasSheetUsers: true, user: found };
+        }
+
         async function handleSiswaLogin(event) {
             event.preventDefault();
             const nameInput = document.getElementById('login-siswa-nama').value.trim();
-            const kelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
-            if (!nameInput || !kelasInput) return;
+            const passOrKelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
+            if (!nameInput || !passOrKelasInput) return;
 
             showToast('Menghubungkan ke database Spreadsheet...', 'info');
             await fetchAllStudentsFromSheet();
 
-            const studentId = generateStudentId(nameInput, kelasInput);
-            currentSession = { role: 'siswa', name: nameInput, kelas: kelasInput, studentId: studentId };
+            // Cek apakah akun siswa terdaftar di sheet 'PenggunaLogin'
+            const authCheck = verifyUserFromSheet('siswa', nameInput, passOrKelasInput);
+            let finalName = nameInput;
+            let finalKelas = passOrKelasInput;
+
+            if (authCheck.hasSheetUsers && authCheck.matched && authCheck.user) {
+                finalName = authCheck.user.name;
+                finalKelas = (authCheck.user.kelas && authCheck.user.kelas !== '-') ? authCheck.user.kelas : passOrKelasInput;
+            } else {
+                // Cek apakah siswa terdaftar di tab 'Database Siswa'
+                const dbMatch = Object.values(allStudentsCache).find(
+                    s => (s.name || '').trim().toLowerCase() === nameInput.toLowerCase() &&
+                         (s.kelas || '').trim().toUpperCase() === passOrKelasInput
+                );
+                if (dbMatch) {
+                    finalName = dbMatch.name;
+                    finalKelas = dbMatch.kelas;
+                } else if (authCheck.hasSheetUsers) {
+                    showToast('Nama siswa atau password/kelas tidak cocok dengan data Spreadsheet!', 'error');
+                    return;
+                }
+            }
+
+            const studentId = generateStudentId(finalName, finalKelas);
+            currentSession = { role: 'siswa', name: finalName, kelas: finalKelas, studentId: studentId };
             safeStorageSet(SESSION_KEY, currentSession);
 
             const savedStudent = allStudentsCache[studentId];
@@ -1228,7 +1287,7 @@
                 await saveCurrentStudentProgress();
             }
 
-            showToast(`Ahlan wa Sahlan, ${nameInput}!`, 'success');
+            showToast(`Ahlan wa Sahlan, ${finalName}!`, 'success');
             initAppWorkspace();
         }
 
@@ -1239,13 +1298,17 @@
             const pjPass = document.getElementById('login-pj-pass').value.trim();
 
             if (!pjName || !kelasInput) return;
-            if (pjPass !== PJ_PASSWORD) {
-                showToast(`Password PJ salah! Gunakan password: ${PJ_PASSWORD}`, 'error');
+
+            showToast(`Memverifikasi akun PJ Kelas ${kelasInput}...`, 'info');
+            await fetchAllStudentsFromSheet();
+
+            const authCheck = verifyUserFromSheet('pj', pjName, pjPass, kelasInput);
+            const validFallback = pjPass === PJ_PASSWORD;
+
+            if (!authCheck.matched && !validFallback) {
+                showToast(`Nama, kelas, atau password PJ tidak sesuai!`, 'error');
                 return;
             }
-
-            showToast(`Memuat data setoran Kelas ${kelasInput}...`, 'info');
-            await fetchAllStudentsFromSheet();
 
             currentSession = { role: 'pj', name: pjName, kelas: kelasInput };
             safeStorageSet(SESSION_KEY, currentSession);
@@ -1259,13 +1322,16 @@
             const guruName = document.getElementById('login-guru-nama').value.trim();
             const guruPass = document.getElementById('login-guru-pass').value.trim();
 
-            if (guruPass !== GURU_PASSWORD) {
-                showToast(`Password guru salah! Gunakan password: ${GURU_PASSWORD}`, 'error');
+            showToast('Memverifikasi akun Guru dari Spreadsheet...', 'info');
+            await fetchAllStudentsFromSheet();
+
+            const authCheck = verifyUserFromSheet('guru', guruName, guruPass);
+            const validFallback = guruPass === GURU_PASSWORD;
+
+            if (!authCheck.matched && !validFallback) {
+                showToast(`Nama atau password guru salah!`, 'error');
                 return;
             }
-
-            showToast('Memuat seluruh data siswa dari Spreadsheet...', 'info');
-            await fetchAllStudentsFromSheet();
 
             currentSession = { role: 'guru', name: guruName };
             safeStorageSet(SESSION_KEY, currentSession);
