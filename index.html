@@ -1,77 +1,658 @@
-// ============================================================================
-        // 3. SISTEM DATABASE SISWA (GOOGLE SPREADSHEET + CACHE LOKAL)
-        // ============================================================================
-        
-        // [WAJIB DIISI] Tempelkan URL Web App dari Google Apps Script di bawah ini:
-        const GOOGLE_SCRIPT_URL = '1JTnbA2jslkbWDvuyxr1OuDSeHeFbpp0yxxWKnyNv7kw';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hafidz Juz 30 - Aplikasi Menghafal Al-Qur'an Juz Amma</title>
+    
+    <!-- Tailwind CSS CDN untuk Styling Modern & Responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans (UI), Amiri & Scheherazade New (Teks Arab) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome untuk Ikon Antarmuka -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Konfigurasi Tema Warna & Font Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        arabic: ['Amiri', 'Scheherazade New', 'serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        sand: {
+                            50: '#fdfbf7',
+                            100: '#f7f3e8',
+                            200: '#efe6d0',
+                            800: '#4a4235',
+                            900: '#2d2820',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#d97706',
+                            600: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-        // Variabel penampung database sementara di memori agar aplikasi tetap cepat
-        let allStudentsCache = JSON.parse(localStorage.getItem(DB_USERS_KEY) || '{}');
+    <style>
+        /* Motif latar belakang bernuansa Islami */
+        .islamic-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Pengaturan khusus teks Arab agar harakat terbaca jelas */
+        .arabic-text {
+            font-family: 'Amiri', 'Scheherazade New', serif;
+            line-height: 2.35;
+            direction: rtl;
+        }
+        /* Efek blur untuk Mode Uji Hafalan Mandiri */
+        .blur-hafalan {
+            filter: blur(7px);
+            user-select: none;
+            transition: filter 0.25s ease;
+        }
+        .blur-hafalan:hover {
+            filter: blur(0px);
+        }
+    </style>
+</head>
+<body class="bg-sand-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
+
+    <!-- Pemutar Audio Murottal Tersembunyi -->
+    <audio id="quran-audio-player" preload="none"></audio>
+
+    <!-- Wadah Notifikasi Toast (Pengganti alert() bawaan browser) -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ========================================================================
+         BAGIAN 1: HALAMAN GERBANG LOGIN (SISWA & GURU)
+         ======================================================================== -->
+    <section id="view-login" class="flex-1 flex items-center justify-center p-4 sm:p-6 islamic-pattern bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-950">
+        <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-emerald-700/30 overflow-hidden">
+            <!-- Header Kartu Login -->
+            <div class="bg-gradient-to-r from-emerald-800 to-emerald-900 p-6 text-center text-white relative">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-gold-500/20 border border-gold-400/40 flex items-center justify-center text-gold-400 shadow-inner mb-3">
+                    <i class="fa-solid fa-book-quran text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight">Hafidz Juz 30</h1>
+                <p class="text-xs text-emerald-200 mt-1">Sistem Monitoring & Setoran Hafalan Juz Amma</p>
+            </div>
+
+            <!-- Pilihan Peran Login -->
+            <div class="p-6 space-y-5">
+                <div class="grid grid-cols-2 gap-2 p-1.5 bg-sand-100 dark:bg-slate-800 rounded-2xl">
+                    <button type="button" id="tab-role-siswa" onclick="switchLoginRole('siswa')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        <span>Masuk Siswa</span>
+                    </button>
+                    <button type="button" id="tab-role-guru" onclick="switchLoginRole('guru')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <span>Masuk Guru</span>
+                    </button>
+                </div>
+
+                <!-- FORM LOGIN SISWA -->
+                <form id="form-login-siswa" onsubmit="handleSiswaLogin(event)" class="space-y-4">
+                    <div>
+                        <label for="login-siswa-nama" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nama Lengkap Siswa</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-siswa-nama" required placeholder="Contoh: Ahmad Fauzi" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="login-siswa-kelas" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Password / Kelas</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-school absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-siswa-kelas" required placeholder="Contoh: 7A, 8B, atau 9C" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Gunakan nama kelas sebagai kata sandi masuk agar progres otomatis masuk ke tab kelasmu di Spreadsheet.</p>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-700/20 transition flex items-center justify-center gap-2">
+                        <span>Mulai Menghafal</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
+                        <button type="button" onclick="quickDemoLogin('siswa')" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - 7A)
+                        </button>
+                    </div>
+                </form>
+
+                <!-- FORM LOGIN GURU -->
+                <form id="form-login-guru" onsubmit="handleGuruLogin(event)" class="hidden space-y-4">
+                    <div>
+                        <label for="login-guru-nama" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nama Ustadz / Guru</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user-tie absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-guru-nama" required placeholder="Contoh: Ustadz Abdullah" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="login-guru-pass" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Password Guru</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="password" id="login-guru-pass" required placeholder="Masukkan password guru" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500">
+                        </div>
+                        <p class="text-[11px] text-amber-700 dark:text-amber-400 mt-1.5 bg-amber-50 dark:bg-amber-950/50 px-2.5 py-1 rounded-lg border border-amber-200/60 dark:border-amber-800/50">
+                            <i class="fa-solid fa-key mr-1"></i>Info Login Demo: Password guru adalah <strong class="font-mono">guru</strong>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-sm shadow-lg shadow-gold-500/20 transition flex items-center justify-center gap-2">
+                        <span>Masuk Dashboard Guru</span>
+                        <i class="fa-solid fa-gauge"></i>
+                    </button>
+
+                    <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
+                        <button type="button" onclick="quickDemoLogin('guru')" class="text-xs font-semibold text-gold-600 dark:text-gold-400 hover:underline">
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Guru (Ustadz Rahmat)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================================
+         BAGIAN 2: WORKSPACE SISWA (HEADER, DAFTAR SURAT & MODE MENGHAFAL)
+         ======================================================================== -->
+    <div id="siswa-workspace" class="hidden flex-1 flex flex-col">
+        <!-- Header & Bar Progres Siswa -->
+        <header class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-900 text-white shadow-lg islamic-pattern sticky top-0 z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <!-- Logo & Identitas Siswa -->
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('list')">
+                        <div class="w-11 h-11 rounded-2xl bg-gold-500/20 border border-gold-400/40 flex items-center justify-center text-gold-400 shadow-inner">
+                            <i class="fa-solid fa-book-quran text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-bold tracking-tight flex flex-wrap items-center gap-2">
+                                <span>Hafidz Juz 30</span>
+                                <span id="header-siswa-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gold-500/25 text-gold-300 border border-gold-400/40">
+                                    Siswa • Kelas -
+                                </span>
+                            </h1>
+                            <p class="text-xs text-emerald-200 hidden sm:block">Pendamping Interaktif Menghafal & Muraja'ah Al-Qur'an</p>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Navigasi Siswa -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <button onclick="switchView('list')" id="nav-btn-list" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white/15 text-white hover:bg-white/25 transition flex items-center gap-2">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span>Daftar Surat</span>
+                        </button>
+                        <button onclick="toggleDarkMode()" title="Mode Malam / Siang" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-emerald-100 transition">
+                            <i id="theme-icon" class="fa-solid fa-moon"></i>
+                        </button>
+                        <button onclick="logoutUser()" title="Keluar Akun" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-red-500/20 hover:bg-red-500/40 border border-red-400/30 text-red-100 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span class="hidden sm:inline">Keluar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bar Progres Keseluruhan Juz 30 & Target Harian -->
+                <div class="mt-4 pt-3 border-t border-emerald-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs mb-1.5">
+                            <span class="text-emerald-200 font-medium">Progres Hafalan Juz 30 (<span id="stat-hafal-count">0</span>/37 Surat Hafal)</span>
+                            <span id="stat-percentage" class="font-bold text-gold-400">0%</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-emerald-950/70 rounded-full overflow-hidden p-0.5">
+                            <div id="global-progress-bar" class="h-full bg-gradient-to-r from-gold-500 to-amber-300 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 bg-emerald-950/50 px-3 py-1.5 rounded-xl border border-emerald-700/50 text-xs">
+                        <i class="fa-solid fa-bullseye text-gold-400"></i>
+                        <span class="text-emerald-200">Target Hari Ini:</span>
+                        <input type="text" id="daily-target-input" placeholder="Misal: An-Naba 1-10" 
+                            class="bg-transparent border-b border-emerald-600 focus:border-gold-400 text-white placeholder-emerald-400/60 focus:outline-none w-32 sm:w-40 text-xs py-0.5"
+                            onchange="saveDailyTarget(this.value)">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Konten Utama Siswa -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+            <!-- Banner Catatan Evaluasi dari Guru -->
+            <div id="siswa-teacher-feedback-banner" class="hidden mb-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-slate-900 border border-amber-300 dark:border-amber-700/60 rounded-2xl p-4 shadow-sm flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                    <i class="fa-solid fa-comment-dots text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-400">Catatan Evaluasi dari Guru</h4>
+                        <span id="siswa-teacher-feedback-date" class="text-[11px] text-amber-700/70 dark:text-amber-300/60"></span>
+                    </div>
+                    <p id="siswa-teacher-feedback-text" class="text-sm text-slate-800 dark:text-slate-200 mt-1 font-medium"></p>
+                </div>
+            </div>
+
+            <!-- VIEW 1: DAFTAR 37 SURAT JUZ 30 -->
+            <section id="view-surah-list" class="space-y-6">
+                <!-- Bar Pencarian & Filter Status Surat -->
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="surah-search-input" oninput="renderSurahGrid()" placeholder="Cari nama atau arti surat..." 
+                            class="w-full pl-9 pr-4 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
+                        <button onclick="setSurahFilter('all')" id="filter-btn-all" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition">Semua (37)</button>
+                        <button onclick="setSurahFilter('hafal')" id="filter-btn-hafal" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100 transition">Hafal</button>
+                        <button onclick="setSurahFilter('proses')" id="filter-btn-proses" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-amber-100 transition">Proses</button>
+                        <button onclick="setSurahFilter('belum')" id="filter-btn-belum" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">Belum</button>
+                    </div>
+                </div>
+
+                <!-- Grid Kartu 37 Surat -->
+                <div id="surah-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Diisi secara dinamis oleh JavaScript -->
+                </div>
+            </section>
+
+            <!-- VIEW 2: DETAIL SURAT & MODE MENGHAFAL -->
+            <section id="view-surah-detail" class="hidden space-y-5">
+                <!-- Panel Kontrol Detail Surat -->
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <button onclick="switchView('list')" class="px-3.5 py-2 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-sand-200 text-xs font-bold flex items-center gap-2 transition">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            <span>Kembali ke Daftar</span>
+                        </button>
+
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-slate-500">Status Hafalan:</span>
+                            <select id="detail-surah-status" onchange="updateCurrentSurahStatus(this.value)" class="px-3 py-1.5 rounded-xl text-xs font-bold border border-sand-200 dark:border-slate-700 bg-sand-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                                <option value="belum">Belum Dihafal</option>
+                                <option value="proses">Sedang Proses</option>
+                                <option value="hafal">Sudah Hafal</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-sand-100 dark:border-slate-800">
+                        <div>
+                            <h2 id="detail-surah-title" class="text-xl font-extrabold text-emerald-900 dark:text-emerald-400">QS. An-Naba</h2>
+                            <p id="detail-surah-meta" class="text-xs text-slate-500 dark:text-slate-400">Berita Besar • 40 Ayat • Makkiyah</p>
+                        </div>
+                        <div id="detail-surah-arabic" class="arabic-text text-3xl font-bold text-emerald-800 dark:text-emerald-300">النبإ</div>
+                    </div>
+
+                    <!-- Tombol Alat Bantu Menghafal -->
+                    <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-sand-100 dark:border-slate-800">
+                        <button onclick="togglePlayAllSurah()" id="btn-play-all" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white transition flex items-center gap-1.5">
+                            <i id="icon-play-all" class="fa-solid fa-play"></i>
+                            <span id="text-play-all">Putar Semua Ayat</span>
+                        </button>
+                        <button onclick="toggleHafalanMode()" id="btn-toggle-hafalan" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-sand-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-amber-100 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-eye-slash"></i>
+                            <span>Mode Uji Hafalan (Blur)</span>
+                        </button>
+                        <button onclick="toggleLatinDisplay()" id="btn-toggle-latin" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 transition">
+                            Latin: ON
+                        </button>
+                        <button onclick="toggleTransDisplay()" id="btn-toggle-trans" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 transition">
+                            Terjemah: ON
+                        </button>
+                    </div>
+
+                    <!-- Catatan Pribadi Siswa -->
+                    <div class="pt-2">
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">Catatan Pribadi (Ayat yang perlu diulang / hukum tajwid):</label>
+                        <input type="text" id="detail-surah-note" onchange="saveCurrentSurahNote(this.value)" placeholder="Tulis catatan kecilmu di sini..." 
+                            class="w-full px-3.5 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                    </div>
+                </div>
+
+                <!-- Daftar Ayat Al-Qur'an -->
+                <div id="ayah-list-container" class="space-y-4">
+                    <!-- Diisi secara dinamis oleh JavaScript -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ========================================================================
+         BAGIAN 3: WORKSPACE GURU (DASHBOARD PANTAUAN & PENILAIAN TASMI')
+         ======================================================================== -->
+    <div id="guru-workspace" class="hidden flex-1 flex flex-col">
+        <!-- Header Guru -->
+        <header class="bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white shadow-lg islamic-pattern sticky top-0 z-30 border-b border-emerald-800/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gold-500/20 border border-gold-400/40 flex items-center justify-center text-gold-400 shadow-inner">
+                        <i class="fa-solid fa-chalkboard-user text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight flex items-center gap-2">
+                            <span>Dashboard Guru Tahfidz</span>
+                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">Juz 30</span>
+                        </h1>
+                        <p id="header-guru-name" class="text-xs text-emerald-200">Selamat datang, Ustadz/Ustadzah</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="refreshGuruData()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span>Segarkan Data</span>
+                    </button>
+                    <button onclick="exportStudentsCSV()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-700 hover:bg-emerald-600 text-white shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>Export CSV</span>
+                    </button>
+                    <button onclick="toggleDarkMode()" title="Mode Malam / Siang" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-emerald-100 transition">
+                        <i id="theme-icon-guru" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button onclick="logoutUser()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-red-600/80 hover:bg-red-600 text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Konten Utama Dashboard Guru -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <!-- Kartu Ringkasan Statistik (3 Kartu Utama) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Siswa Terdaftar</p>
+                        <p id="guru-stat-total-siswa" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Rata-Rata Hafalan</p>
+                        <p id="guru-stat-avg-progress" class="text-2xl font-extrabold text-slate-900 dark:text-white">0%</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Surat Tuntas</p>
+                        <p id="guru-stat-total-surah" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Filter Kelas & Pencarian Siswa -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                    <div class="relative flex-1 sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="guru-search-siswa" oninput="renderGuruStudentTable()" placeholder="Cari nama siswa..." 
+                            class="w-full pl-9 pr-4 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                    </div>
+
+                    <select id="guru-filter-kelas" onchange="renderGuruStudentTable()" class="px-3.5 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        <option value="ALL">Semua Kelas</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <button onclick="addDummyStudents()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Tambah Data Siswa Simulasi</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Monitoring Progres Siswa -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-sand-50 dark:bg-slate-800/80 border-b border-sand-200 dark:border-slate-800 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
+                                <th class="py-3.5 px-4">Nama Siswa</th>
+                                <th class="py-3.5 px-4">Kelas</th>
+                                <th class="py-3.5 px-4">Progres Juz 30</th>
+                                <th class="py-3.5 px-4">Aktivitas Terakhir</th>
+                                <th class="py-3.5 px-4 text-right">Aksi Tasmi'</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guru-student-tbody" class="divide-y divide-sand-100 dark:divide-slate-800 text-xs sm:text-sm">
+                            <!-- Diisi secara dinamis oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================================
+         BAGIAN 4: MODAL PENILAIAN SETORAN (TASMI') GURU
+         ======================================================================== -->
+    <div id="guru-eval-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl border border-sand-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Header Modal -->
+            <div class="bg-emerald-900 text-white px-6 py-4 flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 id="eval-modal-siswa-name" class="font-bold text-lg">Nama Siswa</h3>
+                        <span id="eval-modal-siswa-kelas" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gold-500/25 text-gold-300 border border-gold-400/40">Kelas 7A</span>
+                    </div>
+                    <p id="eval-modal-siswa-summary" class="text-xs text-emerald-200 mt-0.5">Progres: 0/37 Surat Hafal (0%)</p>
+                </div>
+                <button onclick="closeGuruEvalModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form Catatan Evaluasi Guru -->
+            <div class="p-4 sm:px-6 bg-amber-50/70 dark:bg-slate-800/60 border-b border-sand-200 dark:border-slate-800 space-y-2">
+                <label for="eval-teacher-feedback-input" class="block text-xs font-bold text-amber-900 dark:text-amber-400">
+                    <i class="fa-solid fa-comment-medical mr-1"></i>Catatan / Pesan Evaluasi Guru (Akan tampil di beranda siswa):
+                </label>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="eval-teacher-feedback-input" placeholder="Contoh: Alhamdulillah An-Naba lancar, perbaiki panjang mad pada QS. An-Nazi'at..." 
+                        class="flex-1 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button onclick="saveTeacherFeedbackForStudent()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shrink-0">
+                        Simpan Catatan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid Validasi 37 Surat Juz 30 -->
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Validasi Status Hafalan 37 Surat Juz 30</h4>
+                    <span class="text-[11px] text-slate-400">Klik kartu surat untuk mengubah status penilaian tasmi'</span>
+                </div>
+                <div id="eval-surah-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <!-- Diisi secara dinamis oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="px-6 py-3.5 bg-sand-50 dark:bg-slate-800/60 border-t border-sand-200 dark:border-slate-800 flex justify-end">
+                <button onclick="closeGuruEvalModal()" class="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition">
+                    Selesai & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================
+         BAGIAN 5: LOGIKA JAVASCRIPT & INTEGRASI GOOGLE SPREADSHEET
+         ======================================================================== -->
+    <script>
+        /**
+         * [WAJIB DIISI] Tempelkan URL Web App dari Google Apps Script Anda di bawah ini:
+         * Contoh: 'https://script.google.com/macros/s/AKfycbx.../exec'
+         */
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDEWmnoS-LXRHMDLW1OtZEyUIQXd2a5zRhiVOAKImjBWzwQfw0_SLVEABAj_GiGiko-g/exec';
+
+        // Kata sandi default untuk masuk sebagai Guru
+        const GURU_PASSWORD = 'guru';
+
+        // Kunci penyimpanan sementara di browser (cache offline)
+        const DB_USERS_KEY = 'juz30_all_students_db';
+        const SESSION_KEY = 'juz30_active_session';
+
+        // Daftar lengkap 37 Surat dalam Juz 30 (Surat ke-78 sampai ke-114)
+        const JUZ_30_SURAHS = [
+            { number: 78, name: "An-Naba'", arabic: "النبإ", meaning: "Berita Besar", ayahs: 40, type: "Makkiyah" },
+            { number: 79, name: "An-Nazi'at", arabic: "النازعات", meaning: "Malaikat yang Mencabut", ayahs: 46, type: "Makkiyah" },
+            { number: 80, name: "'Abasa", arabic: "عبس", meaning: "Ia Bermuka Masam", ayahs: 42, type: "Makkiyah" },
+            { number: 81, name: "At-Takwir", arabic: "التكوير", meaning: "Menggulung", ayahs: 29, type: "Makkiyah" },
+            { number: 82, name: "Al-Infitar", arabic: "الانفطار", meaning: "Terbelah", ayahs: 19, type: "Makkiyah" },
+            { number: 83, name: "Al-Mutaffifin", arabic: "المطففين", meaning: "Orang-Orang yang Curang", ayahs: 36, type: "Makkiyah" },
+            { number: 84, name: "Al-Insyiqaq", arabic: "الانشقاق", meaning: "Terbelah", ayahs: 25, type: "Makkiyah" },
+            { number: 85, name: "Al-Buruj", arabic: "البروج", meaning: "Gugusan Bintang", ayahs: 22, type: "Makkiyah" },
+            { number: 86, name: "At-Tariq", arabic: "الطارق", meaning: "Yang Datang di Malam Hari", ayahs: 17, type: "Makkiyah" },
+            { number: 87, name: "Al-A'la", arabic: "الأعلى", meaning: "Yang Paling Tinggi", ayahs: 19, type: "Makkiyah" },
+            { number: 88, name: "Al-Ghasyiyah", arabic: "الغاشية", meaning: "Hari Pembalasan", ayahs: 26, type: "Makkiyah" },
+            { number: 89, name: "Al-Fajr", arabic: "الفجر", meaning: "Fajar", ayahs: 30, type: "Makkiyah" },
+            { number: 90, name: "Al-Balad", arabic: "البلد", meaning: "Negeri", ayahs: 20, type: "Makkiyah" },
+            { number: 91, name: "Asy-Syams", arabic: "الشمس", meaning: "Matahari", ayahs: 15, type: "Makkiyah" },
+            { number: 92, name: "Al-Lail", arabic: "الليل", meaning: "Malam", ayahs: 21, type: "Makkiyah" },
+            { number: 93, name: "Ad-Duha", arabic: "الضحى", meaning: "Waktu Duha", ayahs: 11, type: "Makkiyah" },
+            { number: 94, name: "Al-Insyirah", arabic: "الشرح", meaning: "Melapangkan", ayahs: 8, type: "Makkiyah" },
+            { number: 95, name: "At-Tin", arabic: "التين", meaning: "Buah Tin", ayahs: 8, type: "Makkiyah" },
+            { number: 96, name: "Al-'Alaq", arabic: "العلق", meaning: "Segumpal Darah", ayahs: 19, type: "Makkiyah" },
+            { number: 97, name: "Al-Qadr", arabic: "القدر", meaning: "Kemuliaan", ayahs: 5, type: "Makkiyah" },
+            { number: 98, name: "Al-Bayyinah", arabic: "البينة", meaning: "Pembuktian", ayahs: 8, type: "Madaniyah" },
+            { number: 99, name: "Az-Zalzalah", arabic: "الزلزلة", meaning: "Kegoncangan", ayahs: 8, type: "Madaniyah" },
+            { number: 100, name: "Al-'Adiyat", arabic: "العاديات", meaning: "Berlari Kencang", ayahs: 11, type: "Makkiyah" },
+            { number: 101, name: "Al-Qari'ah", arabic: "القارعة", meaning: "Hari Kiamat", ayahs: 11, type: "Makkiyah" },
+            { number: 102, name: "At-Takasur", arabic: "التكاثر", meaning: "Bermegah-Megahan", ayahs: 8, type: "Makkiyah" },
+            { number: 103, name: "Al-'Asr", arabic: "العصر", meaning: "Masa", ayahs: 3, type: "Makkiyah" },
+            { number: 104, name: "Al-Humazah", arabic: "الهمزة", meaning: "Pengumpat", ayahs: 9, type: "Makkiyah" },
+            { number: 105, name: "Al-Fil", arabic: "الفيل", meaning: "Gajah", ayahs: 5, type: "Makkiyah" },
+            { number: 106, name: "Quraisy", arabic: "قريش", meaning: "Suku Quraisy", ayahs: 4, type: "Makkiyah" },
+            { number: 107, name: "Al-Ma'un", arabic: "الماعون", meaning: "Barang-Barang yang Berguna", ayahs: 7, type: "Makkiyah" },
+            { number: 108, name: "Al-Kausar", arabic: "الكوثر", meaning: "Nikmat yang Berlimpah", ayahs: 3, type: "Makkiyah" },
+            { number: 109, name: "Al-Kafirun", arabic: "الكافرون", meaning: "Orang-Orang Kafir", ayahs: 6, type: "Makkiyah" },
+            { number: 110, name: "An-Nasr", arabic: "النصر", meaning: "Pertolongan", ayahs: 3, type: "Madaniyah" },
+            { number: 111, name: "Al-Lahab", arabic: "المسد", meaning: "Gejolak Api", ayahs: 5, type: "Makkiyah" },
+            { number: 112, name: "Al-Ikhlas", arabic: "الإخلاص", meaning: "Ikhlas", ayahs: 4, type: "Makkiyah" },
+            { number: 113, name: "Al-Falaq", arabic: "الفلق", meaning: "Waktu Subuh", ayahs: 5, type: "Makkiyah" },
+            { number: 114, name: "An-Nas", arabic: "الناس", meaning: "Umat Manusia", ayahs: 6, type: "Makkiyah" }
+        ];
+
+        // State Sesi & Cache Database
+        let currentSession = safeStorageGet(SESSION_KEY, null);
+        let allStudentsCache = safeStorageGet(DB_USERS_KEY, {});
+
+        // State Aplikasi Utama
+        let appState = {
+            progress: {},
+            ayahHafal: {},
+            notes: {},
+            dailyTarget: '',
+            darkMode: localStorage.getItem('juz30_dark_mode') === 'true',
+            currentFilter: 'all',
+            currentSurah: null,
+            cacheSurahs: {},
+            hafalanMode: false,
+            showLatin: true,
+            showTrans: true,
+            isPlayingAll: false,
+            playAllIndex: 0,
+            evaluatingStudentId: null
+        };
+
+        const audioPlayer = document.getElementById('quran-audio-player');
+
+        // ========================================================================
+        // FUNGSI KOMUNIKASI DATABASE GOOGLE SPREADSHEET
+        // ========================================================================
 
         /**
-         * Mengambil seluruh data siswa terbaru dari Google Spreadsheet.
-         * Dipanggil saat halaman dimuat, saat login, dan saat guru membuka dashboard.
+         * Mengambil seluruh data siswa terbaru dari Google Spreadsheet (HTTP GET)
          */
         async function fetchAllStudentsFromSheet() {
             if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
-                console.warn('URL Google Apps Script belum diatur. Menggunakan cache lokal.');
                 return allStudentsCache;
             }
-
             try {
                 const response = await fetch(GOOGLE_SCRIPT_URL);
                 const result = await response.json();
-
                 if (result.status === 'success' && result.students) {
                     allStudentsCache = result.students;
-                    // Simpan salinan ke localStorage sebagai cadangan offline
-                    localStorage.setItem(DB_USERS_KEY, JSON.stringify(allStudentsCache));
+                    safeStorageSet(DB_USERS_KEY, allStudentsCache);
                     return allStudentsCache;
-                } else {
-                    throw new Error(result.message || 'Gagal membaca data dari Spreadsheet');
                 }
             } catch (error) {
-                console.error('Error mengambil data Spreadsheet:', error);
-                showToast('Gagal menyinkronkan data online. Menampilkan data tersimpan.', 'warning');
-                return allStudentsCache;
+                console.error('Gagal mengambil data dari Spreadsheet:', error);
             }
+            return allStudentsCache;
         }
 
         /**
-         * Mengirim dan menyimpan data 1 siswa ke Google Spreadsheet.
-         * Menggunakan Content-Type 'text/plain' agar tidak terblokir CORS browser.
+         * Mengirim dan menyimpan data 1 siswa ke Google Spreadsheet (HTTP POST)
          */
         async function syncStudentToSheet(studentData) {
-            // 1. Perbarui cache lokal langsung agar tampilan UI terasa instan
             allStudentsCache[studentData.studentId] = studentData;
-            localStorage.setItem(DB_USERS_KEY, JSON.stringify(allStudentsCache));
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
 
             if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
                 return;
             }
 
-            // 2. Kirim ke Google Spreadsheet di latar belakang
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ student: studentData })
                 });
-                const result = await response.json();
-                if (result.status !== 'success') {
-                    console.error('Gagal simpan ke Spreadsheet:', result.message);
-                }
             } catch (error) {
-                console.error('Koneksi ke Spreadsheet terganggu:', error);
+                console.error('Gagal menyinkronkan data ke Spreadsheet:', error);
             }
         }
 
         /**
-         * Menyimpan progres siswa yang sedang login saat ini ke Spreadsheet.
-         * Panggil fungsi ini setiap kali siswa mencentang ayat, mengubah status surat,
-         * mengisi target harian, atau menyelesaikan kuis.
+         * Membungkus progres siswa yang sedang aktif dan menyimpannya ke Spreadsheet
          */
         async function saveCurrentStudentProgress() {
             if (!currentSession || currentSession.role !== 'siswa') return;
@@ -85,8 +666,6 @@
                 ayahHafal: appState.ayahHafal,
                 notes: appState.notes,
                 dailyTarget: appState.dailyTarget,
-                quizCorrect: appState.quizCorrect,
-                quizWrong: appState.quizWrong,
                 teacherFeedback: existingData.teacherFeedback || '',
                 teacherFeedbackDate: existingData.teacherFeedbackDate || '',
                 lastUpdated: new Date().toLocaleString('id-ID', {
@@ -98,109 +677,726 @@
             await syncStudentToSheet(updatedStudent);
         }
 
-        // ============================================================================
-        // 4. LOGIKA LOGIN SISWA & GURU TERHUBUNG KE SPREADSHEET
-        // ============================================================================
+        // ========================================================================
+        // FUNGSI AUTENTIKASI (LOGIN SISWA & GURU)
+        // ========================================================================
 
-        /**
-         * Membuat ID unik dari kombinasi Nama + Kelas (contoh: "Ahmad Fauzi" & "7A" -> "ahmad_fauzi__7a")
-         */
-        function generateStudentId(name, kelas) {
-            const cleanName = name.trim().toLowerCase().replace(/\s+/g, '_');
-            const cleanKelas = kelas.trim().toLowerCase().replace(/\s+/g, '');
-            return `${cleanName}__${cleanKelas}`;
+        function switchLoginRole(role) {
+            const tabSiswa = document.getElementById('tab-role-siswa');
+            const tabGuru = document.getElementById('tab-role-guru');
+            const formSiswa = document.getElementById('form-login-siswa');
+            const formGuru = document.getElementById('form-login-guru');
+
+            if (role === 'siswa') {
+                tabSiswa.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-2";
+                tabGuru.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+                formSiswa.classList.remove('hidden');
+                formGuru.classList.add('hidden');
+            } else {
+                tabGuru.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-gold-500 text-white shadow-sm transition flex items-center justify-center gap-2";
+                tabSiswa.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2";
+                formGuru.classList.remove('hidden');
+                formSiswa.classList.add('hidden');
+            }
         }
 
-        /**
-         * Proses Login Siswa: Ambil data lama dari Spreadsheet jika sudah pernah mendaftar,
-         * atau buat data baru di Spreadsheet jika siswa baru.
-         */
+        function generateStudentId(name, kelas) {
+            return `${name.trim().toLowerCase().replace(/\s+/g, '_')}__${kelas.trim().toLowerCase().replace(/\s+/g, '')}`;
+        }
+
         async function handleSiswaLogin(event) {
             event.preventDefault();
             const nameInput = document.getElementById('login-siswa-nama').value.trim();
             const kelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
-
             if (!nameInput || !kelasInput) return;
 
             showToast('Menghubungkan ke database Spreadsheet...', 'info');
             await fetchAllStudentsFromSheet();
 
             const studentId = generateStudentId(nameInput, kelasInput);
-            currentSession = {
-                role: 'siswa',
-                name: nameInput,
-                kelas: kelasInput,
-                studentId: studentId
-            };
-            localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+            currentSession = { role: 'siswa', name: nameInput, kelas: kelasInput, studentId: studentId };
+            safeStorageSet(SESSION_KEY, currentSession);
 
-            // Muat progres siswa jika sudah pernah ada di Spreadsheet
             const savedStudent = allStudentsCache[studentId];
             if (savedStudent) {
                 appState.progress = savedStudent.progress || {};
                 appState.ayahHafal = savedStudent.ayahHafal || {};
                 appState.notes = savedStudent.notes || {};
                 appState.dailyTarget = savedStudent.dailyTarget || '';
-                appState.quizCorrect = savedStudent.quizCorrect || 0;
-                appState.quizWrong = savedStudent.quizWrong || 0;
             } else {
-                // Reset state untuk siswa baru & langsung daftarkan barisnya ke Spreadsheet
                 appState.progress = {};
                 appState.ayahHafal = {};
                 appState.notes = {};
                 appState.dailyTarget = '';
-                appState.quizCorrect = 0;
-                appState.quizWrong = 0;
                 await saveCurrentStudentProgress();
             }
 
             showToast(`Ahlan wa Sahlan, ${nameInput}!`, 'success');
-            if (typeof initAppWorkspace === 'function') initAppWorkspace();
+            initAppWorkspace();
         }
 
-        /**
-         * Proses Login Guru: Ambil seluruh data siswa dari Spreadsheet agar dashboard akurat.
-         */
         async function handleGuruLogin(event) {
             event.preventDefault();
             const guruName = document.getElementById('login-guru-nama').value.trim();
             const guruPass = document.getElementById('login-guru-pass').value.trim();
 
-            if (guruPass !== 'guru') {
-                showToast('Password guru salah! Gunakan password: guru', 'error');
+            if (guruPass !== GURU_PASSWORD) {
+                showToast(`Password guru salah! Gunakan password: ${GURU_PASSWORD}`, 'error');
                 return;
             }
 
             showToast('Memuat seluruh data siswa dari Spreadsheet...', 'info');
             await fetchAllStudentsFromSheet();
 
-            currentSession = {
-                role: 'guru',
-                name: guruName
-            };
-            localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+            currentSession = { role: 'guru', name: guruName };
+            safeStorageSet(SESSION_KEY, currentSession);
 
             showToast(`Selamat datang, ${guruName}!`, 'success');
-            if (typeof initAppWorkspace === 'function') initAppWorkspace();
+            initAppWorkspace();
         }
 
-        /**
-         * Simpan Catatan Evaluasi Guru langsung ke baris siswa di Spreadsheet.
-         */
+        function quickDemoLogin(role) {
+            if (role === 'siswa') {
+                document.getElementById('login-siswa-nama').value = 'Ahmad Fauzi';
+                document.getElementById('login-siswa-kelas').value = '7A';
+                document.getElementById('form-login-siswa').dispatchEvent(new Event('submit'));
+            } else {
+                switchLoginRole('guru');
+                document.getElementById('login-guru-nama').value = 'Ustadz Rahmat';
+                document.getElementById('login-guru-pass').value = GURU_PASSWORD;
+                document.getElementById('form-login-guru').dispatchEvent(new Event('submit'));
+            }
+        }
+
+        function logoutUser() {
+            stopAllAudio();
+            currentSession = null;
+            localStorage.removeItem(SESSION_KEY);
+            document.getElementById('siswa-workspace').classList.add('hidden');
+            document.getElementById('guru-workspace').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+            showToast('Anda telah keluar dari akun.', 'info');
+        }
+
+        function initAppWorkspace() {
+            applyDarkMode();
+            if (!currentSession) {
+                document.getElementById('view-login').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('view-login').classList.add('hidden');
+
+            if (currentSession.role === 'siswa') {
+                document.getElementById('guru-workspace').classList.add('hidden');
+                document.getElementById('siswa-workspace').classList.remove('hidden');
+                document.getElementById('header-siswa-badge').textContent = `${currentSession.name} • Kelas ${currentSession.kelas}`;
+                document.getElementById('daily-target-input').value = appState.dailyTarget || '';
+
+                const studentData = allStudentsCache[currentSession.studentId] || {};
+                const banner = document.getElementById('siswa-teacher-feedback-banner');
+                if (studentData.teacherFeedback) {
+                    banner.classList.remove('hidden');
+                    document.getElementById('siswa-teacher-feedback-text').textContent = studentData.teacherFeedback;
+                    document.getElementById('siswa-teacher-feedback-date').textContent = studentData.teacherFeedbackDate || '';
+                } else {
+                    banner.classList.add('hidden');
+                }
+
+                updateGlobalProgressUI();
+                switchView('list');
+            } else if (currentSession.role === 'guru') {
+                document.getElementById('siswa-workspace').classList.add('hidden');
+                document.getElementById('guru-workspace').classList.remove('hidden');
+                document.getElementById('header-guru-name').textContent = `Selamat datang, ${currentSession.name}`;
+                renderGuruDashboard();
+            }
+        }
+
+        // ========================================================================
+        // FUNGSI WORKSPACE SISWA (DAFTAR SURAT, AYAT & AUDIO MUROTTAL)
+        // ========================================================================
+
+        function switchView(view) {
+            stopAllAudio();
+            const listSec = document.getElementById('view-surah-list');
+            const detailSec = document.getElementById('view-surah-detail');
+            if (view === 'list') {
+                detailSec.classList.add('hidden');
+                listSec.classList.remove('hidden');
+                renderSurahGrid();
+            } else {
+                listSec.classList.add('hidden');
+                detailSec.classList.remove('hidden');
+            }
+        }
+
+        function setSurahFilter(filter) {
+            appState.currentFilter = filter;
+            ['all', 'hafal', 'proses', 'belum'].forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (f === filter) {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition";
+                }
+            });
+            renderSurahGrid();
+        }
+
+        function renderSurahGrid() {
+            const grid = document.getElementById('surah-grid');
+            const search = (document.getElementById('surah-search-input').value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            JUZ_30_SURAHS.forEach(surah => {
+                const status = appState.progress[surah.number] || 'belum';
+                if (appState.currentFilter !== 'all' && status !== appState.currentFilter) return;
+                if (search && !surah.name.toLowerCase().includes(search) && !surah.meaning.toLowerCase().includes(search)) return;
+
+                let badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Belum</span>`;
+                if (status === 'hafal') {
+                    badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>Hafal</span>`;
+                } else if (status === 'proses') {
+                    badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"><i class="fa-solid fa-spinner mr-1"></i>Proses</span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 hover:border-emerald-500 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between gap-3";
+                card.onclick = () => openSurahDetail(surah.number);
+                card.innerHTML = `
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-200/60 dark:border-emerald-800">
+                            ${surah.number}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900 dark:text-white">${surah.name}</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">${surah.meaning} • ${surah.ayahs} Ayat</p>
+                            <div class="mt-1.5">${badgeHTML}</div>
+                        </div>
+                    </div>
+                    <div class="arabic-text text-2xl font-bold text-emerald-800 dark:text-emerald-300">${surah.arabic}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        async function openSurahDetail(surahNumber) {
+            const surah = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!surah) return;
+
+            appState.currentSurah = surah;
+            document.getElementById('detail-surah-title').textContent = `QS. ${surah.name}`;
+            document.getElementById('detail-surah-meta').textContent = `${surah.meaning} • ${surah.ayahs} Ayat • ${surah.type}`;
+            document.getElementById('detail-surah-arabic').textContent = surah.arabic;
+            document.getElementById('detail-surah-status').value = appState.progress[surah.number] || 'belum';
+            document.getElementById('detail-surah-note').value = appState.notes[surah.number] || '';
+
+            switchView('detail');
+
+            const container = document.getElementById('ayah-list-container');
+            container.innerHTML = `<div class="text-center py-10 text-sm text-slate-500"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Memuat ayat-ayat QS. ${surah.name}...</div>`;
+
+            try {
+                if (!appState.cacheSurahs[surahNumber]) {
+                    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,id.indonesian,en.transliteration`);
+                    const json = await res.json();
+                    appState.cacheSurahs[surahNumber] = json.data;
+                }
+                renderAyahList(appState.cacheSurahs[surahNumber]);
+            } catch (err) {
+                container.innerHTML = `<div class="text-center py-8 text-sm text-red-500">Gagal memuat ayat. Periksa koneksi internet Anda.</div>`;
+            }
+        }
+
+        function renderAyahList(editionsData) {
+            const container = document.getElementById('ayah-list-container');
+            container.innerHTML = '';
+
+            const arabAyahs = editionsData[0].ayahs;
+            const idAyahs = editionsData[1].ayahs;
+            const latinAyahs = editionsData[2].ayahs;
+            const surahNum = appState.currentSurah.number;
+
+            arabAyahs.forEach((ayah, idx) => {
+                const key = `${surahNum}:${ayah.numberInSurah}`;
+                const isHafal = !!appState.ayahHafal[key];
+
+                const box = document.createElement('div');
+                box.id = `ayah-card-${idx}`;
+                box.className = `p-5 rounded-2xl border transition ${isHafal ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800' : 'bg-white dark:bg-slate-900 border-sand-200 dark:border-slate-800'}`;
+                box.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-800 text-white text-xs font-bold">Ayat ${ayah.numberInSurah}</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="playSingleAyah(${ayah.number}, ${idx})" class="px-3 py-1 rounded-lg bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold transition">
+                                <i class="fa-solid fa-volume-high mr-1 text-emerald-700"></i>Dengar
+                            </button>
+                            <button onclick="toggleAyahHafal('${key}')" class="px-3 py-1 rounded-lg text-xs font-bold transition ${isHafal ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">
+                                <i class="fa-solid fa-check mr-1"></i>${isHafal ? 'Sudah Hafal' : 'Tandai Hafal'}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="arabic-text text-2xl sm:text-3xl text-right font-bold text-slate-900 dark:text-white mb-3 ${appState.hafalanMode ? 'blur-hafalan' : ''}">
+                        ${ayah.text}
+                    </p>
+                    ${appState.showLatin ? `<p class="text-xs italic text-emerald-700 dark:text-emerald-400 mb-1">${latinAyahs[idx].text}</p>` : ''}
+                    ${appState.showTrans ? `<p class="text-xs text-slate-600 dark:text-slate-300">${idAyahs[idx].text}</p>` : ''}
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function playSingleAyah(globalAyahNumber, idx) {
+            stopAllAudio();
+            highlightAyahCard(idx);
+            audioPlayer.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${globalAyahNumber}.mp3`;
+            audioPlayer.play().catch(() => showToast('Gagal memutar audio ayat.', 'error'));
+        }
+
+        function togglePlayAllSurah() {
+            if (appState.isPlayingAll) {
+                stopAllAudio();
+                return;
+            }
+            if (!appState.currentSurah || !appState.cacheSurahs[appState.currentSurah.number]) return;
+
+            appState.isPlayingAll = true;
+            appState.playAllIndex = 0;
+            updatePlayAllButtonUI(true);
+            playNextInQueue();
+        }
+
+        function playNextInQueue() {
+            if (!appState.isPlayingAll || !appState.currentSurah) return;
+            const arabAyahs = appState.cacheSurahs[appState.currentSurah.number][0].ayahs;
+            if (appState.playAllIndex >= arabAyahs.length) {
+                stopAllAudio();
+                return;
+            }
+
+            const ayah = arabAyahs[appState.playAllIndex];
+            highlightAyahCard(appState.playAllIndex);
+            audioPlayer.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`;
+            audioPlayer.play().catch(() => stopAllAudio());
+        }
+
+        audioPlayer.addEventListener('ended', () => {
+            if (appState.isPlayingAll) {
+                appState.playAllIndex++;
+                playNextInQueue();
+            }
+        });
+
+        function stopAllAudio() {
+            appState.isPlayingAll = false;
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            updatePlayAllButtonUI(false);
+            document.querySelectorAll('[id^="ayah-card-"]').forEach(el => el.classList.remove('ring-2', 'ring-gold-400'));
+        }
+
+        function highlightAyahCard(idx) {
+            document.querySelectorAll('[id^="ayah-card-"]').forEach(el => el.classList.remove('ring-2', 'ring-gold-400'));
+            const target = document.getElementById(`ayah-card-${idx}`);
+            if (target) {
+                target.classList.add('ring-2', 'ring-gold-400');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function updatePlayAllButtonUI(playing) {
+            const icon = document.getElementById('icon-play-all');
+            const text = document.getElementById('text-play-all');
+            if (playing) {
+                icon.className = 'fa-solid fa-stop';
+                text.textContent = 'Hentikan Audio';
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.textContent = 'Putar Semua Ayat';
+            }
+        }
+
+        async function toggleAyahHafal(key) {
+            appState.ayahHafal[key] = !appState.ayahHafal[key];
+            if (!appState.ayahHafal[key]) delete appState.ayahHafal[key];
+            renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
+            await saveCurrentStudentProgress();
+        }
+
+        async function updateCurrentSurahStatus(newStatus) {
+            if (!appState.currentSurah) return;
+            if (newStatus === 'belum') {
+                delete appState.progress[appState.currentSurah.number];
+            } else {
+                appState.progress[appState.currentSurah.number] = newStatus;
+            }
+            updateGlobalProgressUI();
+            showToast('Status hafalan diperbarui & disinkronkan!', 'success');
+            await saveCurrentStudentProgress();
+        }
+
+        async function saveCurrentSurahNote(noteText) {
+            if (!appState.currentSurah) return;
+            appState.notes[appState.currentSurah.number] = noteText.trim();
+            showToast('Catatan tersimpan.', 'info');
+            await saveCurrentStudentProgress();
+        }
+
+        async function saveDailyTarget(targetText) {
+            appState.dailyTarget = targetText.trim();
+            showToast('Target harian disimpan!', 'success');
+            await saveCurrentStudentProgress();
+        }
+
+        function toggleHafalanMode() {
+            appState.hafalanMode = !appState.hafalanMode;
+            const btn = document.getElementById('btn-toggle-hafalan');
+            btn.classList.toggle('bg-amber-200', appState.hafalanMode);
+            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
+                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
+            }
+        }
+
+        function toggleLatinDisplay() {
+            appState.showLatin = !appState.showLatin;
+            document.getElementById('btn-toggle-latin').textContent = `Latin: ${appState.showLatin ? 'ON' : 'OFF'}`;
+            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
+                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
+            }
+        }
+
+        function toggleTransDisplay() {
+            appState.showTrans = !appState.showTrans;
+            document.getElementById('btn-toggle-trans').textContent = `Terjemah: ${appState.showTrans ? 'ON' : 'OFF'}`;
+            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
+                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
+            }
+        }
+
+        function updateGlobalProgressUI() {
+            const hafalCount = Object.values(appState.progress).filter(v => v === 'hafal').length;
+            const percent = Math.round((hafalCount / 37) * 100);
+            document.getElementById('stat-hafal-count').textContent = hafalCount;
+            document.getElementById('stat-percentage').textContent = `${percent}%`;
+            document.getElementById('global-progress-bar').style.width = `${percent}%`;
+        }
+
+        // ========================================================================
+        // FUNGSI DASHBOARD GURU & PENILAIAN TASMI'
+        // ========================================================================
+
+        async function refreshGuruData() {
+            showToast('Menyegarkan data dari Spreadsheet...', 'info');
+            await fetchAllStudentsFromSheet();
+            renderGuruDashboard();
+            showToast('Data terbaru berhasil dimuat!', 'success');
+        }
+
+        function renderGuruDashboard() {
+            const students = Object.values(allStudentsCache);
+            const totalSiswa = students.length;
+            let totalSurahTuntas = 0;
+            let sumPercent = 0;
+
+            const kelasSet = new Set();
+            students.forEach(s => {
+                if (s.kelas) kelasSet.add(s.kelas.toUpperCase());
+                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                totalSurahTuntas += hafalCount;
+                sumPercent += Math.round((hafalCount / 37) * 100);
+            });
+
+            const avgPercent = totalSiswa > 0 ? Math.round(sumPercent / totalSiswa) : 0;
+
+            document.getElementById('guru-stat-total-siswa').textContent = totalSiswa;
+            document.getElementById('guru-stat-avg-progress').textContent = `${avgPercent}%`;
+            document.getElementById('guru-stat-total-surah').textContent = totalSurahTuntas;
+
+            const filterSelect = document.getElementById('guru-filter-kelas');
+            const currentVal = filterSelect.value;
+            filterSelect.innerHTML = `<option value="ALL">Semua Kelas</option>`;
+            Array.from(kelasSet).sort().forEach(kls => {
+                filterSelect.innerHTML += `<option value="${kls}">Kelas ${kls}</option>`;
+            });
+            filterSelect.value = Array.from(kelasSet).includes(currentVal) ? currentVal : 'ALL';
+
+            renderGuruStudentTable();
+        }
+
+        function renderGuruStudentTable() {
+            const tbody = document.getElementById('guru-student-tbody');
+            const search = (document.getElementById('guru-search-siswa').value || '').toLowerCase();
+            const filterKelas = document.getElementById('guru-filter-kelas').value;
+            const students = Object.values(allStudentsCache);
+
+            tbody.innerHTML = '';
+            const filtered = students.filter(s => {
+                const matchName = (s.name || '').toLowerCase().includes(search);
+                const matchKelas = filterKelas === 'ALL' || (s.kelas || '').toUpperCase() === filterKelas;
+                return matchName && matchKelas;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-xs">Belum ada data siswa yang sesuai.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(s => {
+                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${s.name}</td>
+                    <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">${s.kelas}</span></td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-600" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="text-xs font-bold">${hafalCount}/37 (${percent}%)</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-slate-500">${s.lastUpdated || '-'}</td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button onclick="openGuruEvalModal('${s.studentId}')" class="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition">
+                            Nilai Tasmi'
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openGuruEvalModal(studentId) {
+            const student = allStudentsCache[studentId];
+            if (!student) return;
+
+            appState.evaluatingStudentId = studentId;
+            document.getElementById('eval-modal-siswa-name').textContent = student.name;
+            document.getElementById('eval-modal-siswa-kelas').textContent = `Kelas ${student.kelas}`;
+            document.getElementById('eval-teacher-feedback-input').value = student.teacherFeedback || '';
+
+            renderEvalSurahList();
+            document.getElementById('guru-eval-modal').classList.remove('hidden');
+        }
+
+        function closeGuruEvalModal() {
+            document.getElementById('guru-eval-modal').classList.add('hidden');
+            appState.evaluatingStudentId = null;
+            renderGuruDashboard();
+        }
+
+        function renderEvalSurahList() {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
+
+            const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
+            const percent = Math.round((hafalCount / 37) * 100);
+            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
+
+            const listContainer = document.getElementById('eval-surah-list');
+            listContainer.innerHTML = '';
+
+            JUZ_30_SURAHS.forEach(surah => {
+                const st = (student.progress && student.progress[surah.number]) || 'belum';
+                let colorClass = "bg-sand-50 dark:bg-slate-800 border-sand-200 dark:border-slate-700 text-slate-600 dark:text-slate-300";
+                let label = "Belum";
+
+                if (st === 'hafal') {
+                    colorClass = "bg-emerald-100 dark:bg-emerald-950 border-emerald-400 text-emerald-900 dark:text-emerald-300";
+                    label = "Hafal ✓";
+                } else if (st === 'proses') {
+                    colorClass = "bg-amber-100 dark:bg-amber-950 border-amber-400 text-amber-900 dark:text-amber-300";
+                    label = "Proses";
+                }
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `p-2.5 rounded-xl border text-left flex items-center justify-between text-xs font-bold transition ${colorClass}`;
+                btn.onclick = () => cycleStudentSurahStatusByGuru(surah.number);
+                btn.innerHTML = `
+                    <span>${surah.number}. ${surah.name}</span>
+                    <span class="text-[11px] px-2 py-0.5 rounded-lg bg-white/70 dark:bg-slate-900/60">${label}</span>
+                `;
+                listContainer.appendChild(btn);
+            });
+        }
+
+        async function cycleStudentSurahStatusByGuru(surahNumber) {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
+            if (!student.progress) student.progress = {};
+
+            const current = student.progress[surahNumber] || 'belum';
+            const next = current === 'belum' ? 'proses' : (current === 'proses' ? 'hafal' : 'belum');
+
+            if (next === 'belum') {
+                delete student.progress[surahNumber];
+            } else {
+                student.progress[surahNumber] = next;
+            }
+
+            student.lastUpdated = new Date().toLocaleString('id-ID', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+
+            renderEvalSurahList();
+            await syncStudentToSheet(student);
+        }
+
         async function saveTeacherFeedbackForStudent() {
-            const studentId = appState.evaluatingStudentId;
-            if (!studentId || !allStudentsCache[studentId]) return;
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
 
             const feedbackText = document.getElementById('eval-teacher-feedback-input').value.trim();
             const todayStr = new Date().toLocaleDateString('id-ID', {
                 day: 'numeric', month: 'long', year: 'numeric'
             });
 
-            const studentData = allStudentsCache[studentId];
-            studentData.teacherFeedback = feedbackText;
-            studentData.teacherFeedbackDate = feedbackText ? todayStr : '';
+            student.teacherFeedback = feedbackText;
+            student.teacherFeedbackDate = feedbackText ? todayStr : '';
 
             showToast('Menyimpan catatan ke Spreadsheet...', 'info');
-            await syncStudentToSheet(studentData);
-            showToast('Catatan evaluasi berhasil disimpan ke Spreadsheet!', 'success');
+            await syncStudentToSheet(student);
+            showToast('Catatan evaluasi berhasil disimpan!', 'success');
         }
+
+        async function addDummyStudents() {
+            const dummies = [
+                {
+                    studentId: 'aisyah_putri__7a',
+                    name: 'Aisyah Putri',
+                    kelas: '7A',
+                    progress: { 114: 'hafal', 113: 'hafal', 112: 'hafal', 111: 'hafal', 110: 'proses' },
+                    ayahHafal: {},
+                    notes: {},
+                    dailyTarget: 'An-Nasr 1-3',
+                    teacherFeedback: 'MasyaAllah, lanjutkan ke surat Al-Kafirun.',
+                    teacherFeedbackDate: new Date().toLocaleDateString('id-ID'),
+                    lastUpdated: new Date().toLocaleString('id-ID')
+                },
+                {
+                    studentId: 'muhammad_rizky__8b',
+                    name: 'Muhammad Rizky',
+                    kelas: '8B',
+                    progress: { 78: 'hafal', 79: 'proses', 114: 'hafal', 113: 'hafal' },
+                    ayahHafal: {},
+                    notes: {},
+                    dailyTarget: 'An-Naziat 1-15',
+                    teacherFeedback: '',
+                    teacherFeedbackDate: '',
+                    lastUpdated: new Date().toLocaleString('id-ID')
+                }
+            ];
+
+            showToast('Menambahkan siswa simulasi ke Spreadsheet...', 'info');
+            for (const d of dummies) {
+                await syncStudentToSheet(d);
+            }
+            renderGuruDashboard();
+            showToast('Data siswa simulasi berhasil ditambahkan!', 'success');
+        }
+
+        function exportStudentsCSV() {
+            const students = Object.values(allStudentsCache);
+            if (students.length === 0) {
+                showToast('Tidak ada data untuk diexport.', 'warning');
+                return;
+            }
+
+            let csv = 'Nama Siswa,Kelas,Surat Hafal,Persentase,Catatan Guru,Pembaruan Terakhir\n';
+            students.forEach(s => {
+                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+                csv += `"${s.name}","${s.kelas}",${hafalCount},${percent}%,"${(s.teacherFeedback || '').replace(/"/g, '""')}","${s.lastUpdated || ''}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Rekap_Hafidz_Juz30_${new Date().toISOString().slice(0, 10)}.csv`;
+            link.click();
+        }
+
+        // ========================================================================
+        // UTILITAS UMUM (STORAGE AMAN, DARK MODE & NOTIFIKASI TOAST)
+        // ========================================================================
+
+        function safeStorageGet(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function safeStorageSet(key, val) {
+            try {
+                localStorage.setItem(key, JSON.stringify(val));
+            } catch (e) {
+                console.warn('Penyimpanan lokal tidak tersedia:', e);
+            }
+        }
+
+        function toggleDarkMode() {
+            appState.darkMode = !appState.darkMode;
+            localStorage.setItem('juz30_dark_mode', appState.darkMode);
+            applyDarkMode();
+        }
+
+        function applyDarkMode() {
+            const html = document.documentElement;
+            const icon1 = document.getElementById('theme-icon');
+            const icon2 = document.getElementById('theme-icon-guru');
+            if (appState.darkMode) {
+                html.classList.add('dark');
+                if (icon1) icon1.className = 'fa-solid fa-sun';
+                if (icon2) icon2.className = 'fa-solid fa-sun';
+            } else {
+                html.classList.remove('dark');
+                if (icon1) icon1.className = 'fa-solid fa-moon';
+                if (icon2) icon2.className = 'fa-solid fa-moon';
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-emerald-800 text-white border-emerald-600',
+                error: 'bg-red-700 text-white border-red-500',
+                warning: 'bg-amber-600 text-white border-amber-400',
+                info: 'bg-slate-800 text-white border-slate-600'
+            };
+            toast.className = `px-4 py-2.5 rounded-xl shadow-lg border text-xs font-semibold transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Inisialisasi aplikasi saat halaman selesai dimuat
+        window.addEventListener('DOMContentLoaded', async () => {
+            applyDarkMode();
+            if (currentSession) {
+                await fetchAllStudentsFromSheet();
+                if (currentSession.role === 'siswa' && allStudentsCache[currentSession.studentId]) {
+                    const saved = allStudentsCache[currentSession.studentId];
+                    appState.progress = saved.progress || {};
+                    appState.ayahHafal = saved.ayahHafal || {};
+                    appState.notes = saved.notes || {};
+                    appState.dailyTarget = saved.dailyTarget || '';
+                }
+            }
+            initAppWorkspace();
+        });
+    </script>
+</body>
+</html>
