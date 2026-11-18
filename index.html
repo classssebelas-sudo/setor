@@ -1,0 +1,206 @@
+// ============================================================================
+        // 3. SISTEM DATABASE SISWA (GOOGLE SPREADSHEET + CACHE LOKAL)
+        // ============================================================================
+        
+        // [WAJIB DIISI] Tempelkan URL Web App dari Google Apps Script di bawah ini:
+        const GOOGLE_SCRIPT_URL = '1JTnbA2jslkbWDvuyxr1OuDSeHeFbpp0yxxWKnyNv7kw';
+
+        // Variabel penampung database sementara di memori agar aplikasi tetap cepat
+        let allStudentsCache = JSON.parse(localStorage.getItem(DB_USERS_KEY) || '{}');
+
+        /**
+         * Mengambil seluruh data siswa terbaru dari Google Spreadsheet.
+         * Dipanggil saat halaman dimuat, saat login, dan saat guru membuka dashboard.
+         */
+        async function fetchAllStudentsFromSheet() {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
+                console.warn('URL Google Apps Script belum diatur. Menggunakan cache lokal.');
+                return allStudentsCache;
+            }
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                const result = await response.json();
+
+                if (result.status === 'success' && result.students) {
+                    allStudentsCache = result.students;
+                    // Simpan salinan ke localStorage sebagai cadangan offline
+                    localStorage.setItem(DB_USERS_KEY, JSON.stringify(allStudentsCache));
+                    return allStudentsCache;
+                } else {
+                    throw new Error(result.message || 'Gagal membaca data dari Spreadsheet');
+                }
+            } catch (error) {
+                console.error('Error mengambil data Spreadsheet:', error);
+                showToast('Gagal menyinkronkan data online. Menampilkan data tersimpan.', 'warning');
+                return allStudentsCache;
+            }
+        }
+
+        /**
+         * Mengirim dan menyimpan data 1 siswa ke Google Spreadsheet.
+         * Menggunakan Content-Type 'text/plain' agar tidak terblokir CORS browser.
+         */
+        async function syncStudentToSheet(studentData) {
+            // 1. Perbarui cache lokal langsung agar tampilan UI terasa instan
+            allStudentsCache[studentData.studentId] = studentData;
+            localStorage.setItem(DB_USERS_KEY, JSON.stringify(allStudentsCache));
+
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
+                return;
+            }
+
+            // 2. Kirim ke Google Spreadsheet di latar belakang
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify({ student: studentData })
+                });
+                const result = await response.json();
+                if (result.status !== 'success') {
+                    console.error('Gagal simpan ke Spreadsheet:', result.message);
+                }
+            } catch (error) {
+                console.error('Koneksi ke Spreadsheet terganggu:', error);
+            }
+        }
+
+        /**
+         * Menyimpan progres siswa yang sedang login saat ini ke Spreadsheet.
+         * Panggil fungsi ini setiap kali siswa mencentang ayat, mengubah status surat,
+         * mengisi target harian, atau menyelesaikan kuis.
+         */
+        async function saveCurrentStudentProgress() {
+            if (!currentSession || currentSession.role !== 'siswa') return;
+
+            const existingData = allStudentsCache[currentSession.studentId] || {};
+            const updatedStudent = {
+                studentId: currentSession.studentId,
+                name: currentSession.name,
+                kelas: currentSession.kelas,
+                progress: appState.progress,
+                ayahHafal: appState.ayahHafal,
+                notes: appState.notes,
+                dailyTarget: appState.dailyTarget,
+                quizCorrect: appState.quizCorrect,
+                quizWrong: appState.quizWrong,
+                teacherFeedback: existingData.teacherFeedback || '',
+                teacherFeedbackDate: existingData.teacherFeedbackDate || '',
+                lastUpdated: new Date().toLocaleString('id-ID', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                })
+            };
+
+            await syncStudentToSheet(updatedStudent);
+        }
+
+        // ============================================================================
+        // 4. LOGIKA LOGIN SISWA & GURU TERHUBUNG KE SPREADSHEET
+        // ============================================================================
+
+        /**
+         * Membuat ID unik dari kombinasi Nama + Kelas (contoh: "Ahmad Fauzi" & "7A" -> "ahmad_fauzi__7a")
+         */
+        function generateStudentId(name, kelas) {
+            const cleanName = name.trim().toLowerCase().replace(/\s+/g, '_');
+            const cleanKelas = kelas.trim().toLowerCase().replace(/\s+/g, '');
+            return `${cleanName}__${cleanKelas}`;
+        }
+
+        /**
+         * Proses Login Siswa: Ambil data lama dari Spreadsheet jika sudah pernah mendaftar,
+         * atau buat data baru di Spreadsheet jika siswa baru.
+         */
+        async function handleSiswaLogin(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('login-siswa-nama').value.trim();
+            const kelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
+
+            if (!nameInput || !kelasInput) return;
+
+            showToast('Menghubungkan ke database Spreadsheet...', 'info');
+            await fetchAllStudentsFromSheet();
+
+            const studentId = generateStudentId(nameInput, kelasInput);
+            currentSession = {
+                role: 'siswa',
+                name: nameInput,
+                kelas: kelasInput,
+                studentId: studentId
+            };
+            localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+
+            // Muat progres siswa jika sudah pernah ada di Spreadsheet
+            const savedStudent = allStudentsCache[studentId];
+            if (savedStudent) {
+                appState.progress = savedStudent.progress || {};
+                appState.ayahHafal = savedStudent.ayahHafal || {};
+                appState.notes = savedStudent.notes || {};
+                appState.dailyTarget = savedStudent.dailyTarget || '';
+                appState.quizCorrect = savedStudent.quizCorrect || 0;
+                appState.quizWrong = savedStudent.quizWrong || 0;
+            } else {
+                // Reset state untuk siswa baru & langsung daftarkan barisnya ke Spreadsheet
+                appState.progress = {};
+                appState.ayahHafal = {};
+                appState.notes = {};
+                appState.dailyTarget = '';
+                appState.quizCorrect = 0;
+                appState.quizWrong = 0;
+                await saveCurrentStudentProgress();
+            }
+
+            showToast(`Ahlan wa Sahlan, ${nameInput}!`, 'success');
+            if (typeof initAppWorkspace === 'function') initAppWorkspace();
+        }
+
+        /**
+         * Proses Login Guru: Ambil seluruh data siswa dari Spreadsheet agar dashboard akurat.
+         */
+        async function handleGuruLogin(event) {
+            event.preventDefault();
+            const guruName = document.getElementById('login-guru-nama').value.trim();
+            const guruPass = document.getElementById('login-guru-pass').value.trim();
+
+            if (guruPass !== 'guru') {
+                showToast('Password guru salah! Gunakan password: guru', 'error');
+                return;
+            }
+
+            showToast('Memuat seluruh data siswa dari Spreadsheet...', 'info');
+            await fetchAllStudentsFromSheet();
+
+            currentSession = {
+                role: 'guru',
+                name: guruName
+            };
+            localStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
+
+            showToast(`Selamat datang, ${guruName}!`, 'success');
+            if (typeof initAppWorkspace === 'function') initAppWorkspace();
+        }
+
+        /**
+         * Simpan Catatan Evaluasi Guru langsung ke baris siswa di Spreadsheet.
+         */
+        async function saveTeacherFeedbackForStudent() {
+            const studentId = appState.evaluatingStudentId;
+            if (!studentId || !allStudentsCache[studentId]) return;
+
+            const feedbackText = document.getElementById('eval-teacher-feedback-input').value.trim();
+            const todayStr = new Date().toLocaleDateString('id-ID', {
+                day: 'numeric', month: 'long', year: 'numeric'
+            });
+
+            const studentData = allStudentsCache[studentId];
+            studentData.teacherFeedback = feedbackText;
+            studentData.teacherFeedbackDate = feedbackText ? todayStr : '';
+
+            showToast('Menyimpan catatan ke Spreadsheet...', 'info');
+            await syncStudentToSheet(studentData);
+            showToast('Catatan evaluasi berhasil disimpan ke Spreadsheet!', 'success');
+        }
