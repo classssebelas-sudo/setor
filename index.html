@@ -101,14 +101,18 @@
 
             <!-- Pilihan Peran Login -->
             <div class="p-6 space-y-5">
-                <div class="grid grid-cols-2 gap-2 p-1.5 bg-sand-100 dark:bg-slate-800 rounded-2xl">
-                    <button type="button" id="tab-role-siswa" onclick="switchLoginRole('siswa')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-2">
+                <div class="grid grid-cols-3 gap-1.5 p-1.5 bg-sand-100 dark:bg-slate-800 rounded-2xl">
+                    <button type="button" id="tab-role-siswa" onclick="switchLoginRole('siswa')" class="py-2.5 px-2 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-user-graduate"></i>
-                        <span>Masuk Siswa</span>
+                        <span>Siswa</span>
                     </button>
-                    <button type="button" id="tab-role-guru" onclick="switchLoginRole('guru')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2">
+                    <button type="button" id="tab-role-pj" onclick="switchLoginRole('pj')" class="py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clipboard-user"></i>
+                        <span>PJ Siswa</span>
+                    </button>
+                    <button type="button" id="tab-role-guru" onclick="switchLoginRole('guru')" class="py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-chalkboard-user"></i>
-                        <span>Masuk Guru</span>
+                        <span>Guru</span>
                     </button>
                 </div>
 
@@ -141,6 +145,50 @@
                     <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
                         <button type="button" onclick="quickDemoLogin('siswa')" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
                             <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - 7A)
+                        </button>
+                    </div>
+                </form>
+
+                <!-- FORM LOGIN PJ SISWA -->
+                <form id="form-login-pj" onsubmit="handlePjLogin(event)" class="hidden space-y-4">
+                    <div>
+                        <label for="login-pj-nama" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nama PJ Siswa</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-clipboard-check absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-pj-nama" required placeholder="Contoh: Budi Santoso" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="login-pj-kelas" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Kelas yang Dikelola</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-users-rectangle absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-pj-kelas" required placeholder="Contoh: 7A" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="login-pj-pass" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Password PJ Siswa</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="password" id="login-pj-pass" required placeholder="Masukkan password PJ" 
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                        </div>
+                        <p class="text-[11px] text-teal-700 dark:text-teal-400 mt-1.5 bg-teal-50 dark:bg-teal-950/50 px-2.5 py-1 rounded-lg border border-teal-200/60 dark:border-teal-800/50">
+                            <i class="fa-solid fa-key mr-1"></i>Info Login Demo: Password PJ adalah <strong class="font-mono">pj</strong>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-bold text-sm shadow-lg shadow-teal-700/20 transition flex items-center justify-center gap-2">
+                        <span>Masuk Panel PJ Siswa</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                    <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
+                        <button type="button" onclick="quickDemoLogin('pj')" class="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline">
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo PJ Siswa (Kelas 7A)
                         </button>
                     </div>
                 </form>
@@ -351,6 +399,129 @@
     </div>
 
     <!-- ========================================================================
+         BAGIAN 2B: WORKSPACE PJ SISWA (PEMILIHAN & MONITORING SETORAN KELAS)
+         ======================================================================== -->
+    <div id="pj-workspace" class="hidden flex-1 flex flex-col">
+        <!-- Header PJ Siswa -->
+        <header class="bg-gradient-to-r from-teal-900 via-emerald-900 to-teal-950 text-white shadow-lg islamic-pattern sticky top-0 z-30 border-b border-teal-700/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gold-500/20 border border-gold-400/40 flex items-center justify-center text-gold-400 shadow-inner">
+                        <i class="fa-solid fa-clipboard-user text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight flex flex-wrap items-center gap-2">
+                            <span>Panel PJ Setoran</span>
+                            <span id="header-pj-kelas-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gold-500/25 text-gold-300 border border-gold-400/40">
+                                Kelas -
+                            </span>
+                        </h1>
+                        <p id="header-pj-name" class="text-xs text-emerald-200">Penanggung Jawab Setoran Hafalan</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="refreshPjData()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate"></i>
+                        <span class="hidden sm:inline">Segarkan Data</span>
+                    </button>
+                    <button onclick="toggleDarkMode()" title="Mode Malam / Siang" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-emerald-100 transition">
+                        <i id="theme-icon-pj" class="fa-solid fa-moon"></i>
+                    </button>
+                    <button onclick="logoutUser()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-red-600/80 hover:bg-red-600 text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Konten Utama PJ Siswa -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            <!-- Kartu Ringkasan Status Setoran Kelas -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Siswa Kelas</p>
+                        <p id="pj-stat-total" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Sudah Setoran</p>
+                        <p id="pj-stat-sudah" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-rose-200 dark:border-rose-900/60 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Belum Setoran</p>
+                        <p id="pj-stat-belum" class="text-2xl font-extrabold text-rose-600 dark:text-rose-400">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Filter Status Setoran, Pencarian & Tambah Siswa Kelas -->
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-4">
+                <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <div class="relative flex-1 sm:w-60">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="pj-search-siswa" oninput="renderPjStudentTable()" placeholder="Cari nama teman sekelas..." 
+                            class="w-full pl-9 pr-4 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-teal-600">
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="setPjFilter('ALL')" id="pj-filter-ALL" class="px-3 py-2 rounded-xl text-xs font-bold bg-teal-700 text-white transition">Semua</button>
+                        <button type="button" onclick="setPjFilter('SUDAH')" id="pj-filter-SUDAH" class="px-3 py-2 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Sudah Setoran</button>
+                        <button type="button" onclick="setPjFilter('BELUM')" id="pj-filter-BELUM" class="px-3 py-2 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">Belum Setoran</button>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-auto flex justify-end">
+                    <button type="button" onclick="openPjAddStudentModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Tambah Siswa ke Kelas Ini</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Pemilihan Siswa untuk Setoran -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                <div class="px-5 py-3.5 bg-sand-50/80 dark:bg-slate-800/60 border-b border-sand-200 dark:border-slate-800 flex items-center justify-between">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Pilih Siswa yang Akan Setoran Hafalan</h2>
+                    <span class="text-[11px] text-slate-400">Klik tombol "Pilih Setoran" untuk mencatat hafalan siswa</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-sand-50 dark:bg-slate-800/80 border-b border-sand-200 dark:border-slate-800 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
+                                <th class="py-3.5 px-4">Nama Siswa</th>
+                                <th class="py-3.5 px-4">Status Setoran</th>
+                                <th class="py-3.5 px-4">Progres Hafalan</th>
+                                <th class="py-3.5 px-4">Pembaruan Terakhir</th>
+                                <th class="py-3.5 px-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pj-student-tbody" class="divide-y divide-sand-100 dark:divide-slate-800 text-xs sm:text-sm">
+                            <!-- Diisi secara dinamis oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================================================
          BAGIAN 3: WORKSPACE GURU (DASHBOARD PANTAUAN & PENILAIAN TASMI')
          ======================================================================== -->
     <div id="guru-workspace" class="hidden flex-1 flex flex-col">
@@ -392,15 +563,35 @@
 
         <!-- Konten Utama Dashboard Guru -->
         <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-            <!-- Kartu Ringkasan Statistik (3 Kartu Utama) -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Kartu Ringkasan Statistik (4 Kartu Utama) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-xl">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 flex items-center justify-center text-xl">
                         <i class="fa-solid fa-users"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Siswa Terdaftar</p>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Seluruh Siswa</p>
                         <p id="guru-stat-total-siswa" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Sudah Setoran</p>
+                        <p id="guru-stat-sudah-setoran" class="text-2xl font-extrabold text-emerald-700 dark:text-emerald-400">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-rose-200 dark:border-rose-900/60 shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Belum Setoran</p>
+                        <p id="guru-stat-belum-setoran" class="text-2xl font-extrabold text-rose-600 dark:text-rose-400">0</p>
                     </div>
                 </div>
 
@@ -413,22 +604,12 @@
                         <p id="guru-stat-avg-progress" class="text-2xl font-extrabold text-slate-900 dark:text-white">0%</p>
                     </div>
                 </div>
-
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-award"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Surat Tuntas</p>
-                        <p id="guru-stat-total-surah" class="text-2xl font-extrabold text-slate-900 dark:text-white">0</p>
-                    </div>
-                </div>
             </div>
 
-            <!-- Bar Filter Kelas & Pencarian Siswa -->
+            <!-- Bar Filter Kelas, Status Setoran & Pencarian Siswa -->
             <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <div class="relative flex-1 sm:w-64">
+                    <div class="relative flex-1 sm:w-56">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="guru-search-siswa" oninput="renderGuruStudentTable()" placeholder="Cari nama siswa..." 
                             class="w-full pl-9 pr-4 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600">
@@ -436,6 +617,12 @@
 
                     <select id="guru-filter-kelas" onchange="renderGuruStudentTable()" class="px-3.5 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600">
                         <option value="ALL">Semua Kelas</option>
+                    </select>
+
+                    <select id="guru-filter-setoran" onchange="renderGuruStudentTable()" class="px-3.5 py-2 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                        <option value="ALL">Semua Status Setoran</option>
+                        <option value="SUDAH">Sudah Setoran</option>
+                        <option value="BELUM">Belum Setoran</option>
                     </select>
                 </div>
 
@@ -455,6 +642,7 @@
                             <tr class="bg-sand-50 dark:bg-slate-800/80 border-b border-sand-200 dark:border-slate-800 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
                                 <th class="py-3.5 px-4">Nama Siswa</th>
                                 <th class="py-3.5 px-4">Kelas</th>
+                                <th class="py-3.5 px-4">Status Setoran</th>
                                 <th class="py-3.5 px-4">Progres Juz 30</th>
                                 <th class="py-3.5 px-4">Aktivitas Terakhir</th>
                                 <th class="py-3.5 px-4 text-right">Aksi Tasmi'</th>
@@ -470,7 +658,7 @@
     </div>
 
     <!-- ========================================================================
-         BAGIAN 4: MODAL PENILAIAN SETORAN (TASMI') GURU
+         BAGIAN 4: MODAL PENILAIAN SETORAN (TASMI') GURU & PJ SISWA
          ======================================================================== -->
     <div id="guru-eval-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl border border-sand-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
@@ -488,8 +676,8 @@
                 </button>
             </div>
 
-            <!-- Form Catatan Evaluasi Guru -->
-            <div class="p-4 sm:px-6 bg-amber-50/70 dark:bg-slate-800/60 border-b border-sand-200 dark:border-slate-800 space-y-2">
+            <!-- Form Catatan Evaluasi Guru (Hanya tampil jika yang login adalah Guru) -->
+            <div id="eval-teacher-feedback-section" class="p-4 sm:px-6 bg-amber-50/70 dark:bg-slate-800/60 border-b border-sand-200 dark:border-slate-800 space-y-2">
                 <label for="eval-teacher-feedback-input" class="block text-xs font-bold text-amber-900 dark:text-amber-400">
                     <i class="fa-solid fa-comment-medical mr-1"></i>Catatan / Pesan Evaluasi Guru (Akan tampil di beranda siswa):
                 </label>
@@ -506,7 +694,7 @@
             <div class="p-4 sm:p-6 overflow-y-auto flex-1">
                 <div class="flex items-center justify-between mb-3">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Validasi Status Hafalan 37 Surat Juz 30</h4>
-                    <span class="text-[11px] text-slate-400">Klik kartu surat untuk mengubah status penilaian tasmi'</span>
+                    <span class="text-[11px] text-slate-400">Klik kartu surat untuk mengubah status setoran (Belum / Proses / Hafal)</span>
                 </div>
                 <div id="eval-surah-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                     <!-- Diisi secara dinamis oleh JavaScript -->
@@ -522,6 +710,32 @@
         </div>
     </div>
 
+    <!-- MODAL TAMBAH SISWA BARU OLEH PJ SISWA -->
+    <div id="pj-add-student-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl shadow-2xl border border-sand-200 dark:border-slate-800 overflow-hidden">
+            <div class="bg-teal-800 text-white px-6 py-4 flex items-center justify-between">
+                <h3 class="font-bold text-base">Tambah Teman Sekelas</h3>
+                <button type="button" onclick="closePjAddStudentModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form onsubmit="handlePjAddStudent(event)" class="p-6 space-y-4">
+                <div>
+                    <label for="pj-new-student-name" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Nama Lengkap Siswa</label>
+                    <input type="text" id="pj-new-student-name" required placeholder="Contoh: Siti Aminah" 
+                        class="w-full px-4 py-2.5 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
+                </div>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                    Siswa akan otomatis ditambahkan ke kelas <strong id="pj-modal-kelas-label">-</strong> dengan status awal <strong>Belum Setoran</strong>, dan langsung tersimpan ke Spreadsheet.
+                </p>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closePjAddStudentModal()" class="px-4 py-2 rounded-xl bg-sand-100 dark:bg-slate-800 text-xs font-bold">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold">Simpan Siswa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ========================================================================
          BAGIAN 5: LOGIKA JAVASCRIPT & INTEGRASI GOOGLE SPREADSHEET
          ======================================================================== -->
@@ -532,8 +746,9 @@
          */
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDEWmnoS-LXRHMDLW1OtZEyUIQXd2a5zRhiVOAKImjBWzwQfw0_SLVEABAj_GiGiko-g/exec';
 
-        // Kata sandi default untuk masuk sebagai Guru
+        // Kata sandi default untuk masuk sebagai Guru & PJ Siswa
         const GURU_PASSWORD = 'guru';
+        const PJ_PASSWORD = 'pj';
 
         // Kunci penyimpanan sementara di browser (cache offline)
         const DB_USERS_KEY = 'juz30_all_students_db';
@@ -592,6 +807,7 @@
             dailyTarget: '',
             darkMode: localStorage.getItem('juz30_dark_mode') === 'true',
             currentFilter: 'all',
+            pjFilter: 'ALL',
             currentSurah: null,
             cacheSurahs: {},
             hafalanMode: false,
@@ -603,6 +819,15 @@
         };
 
         const audioPlayer = document.getElementById('quran-audio-player');
+
+        /**
+         * Mengecek apakah seorang siswa sudah pernah melakukan setoran hafalan
+         * (Minimal 1 surat berstatus 'hafal' atau 'proses')
+         */
+        function hasStudentSetoran(student) {
+            if (!student || !student.progress) return false;
+            return Object.values(student.progress).some(status => status === 'hafal' || status === 'proses');
+        }
 
         // ========================================================================
         // FUNGSI KOMUNIKASI DATABASE GOOGLE SPREADSHEET
@@ -678,26 +903,28 @@
         }
 
         // ========================================================================
-        // FUNGSI AUTENTIKASI (LOGIN SISWA & GURU)
+        // FUNGSI AUTENTIKASI (LOGIN SISWA, PJ SISWA & GURU)
         // ========================================================================
 
         function switchLoginRole(role) {
-            const tabSiswa = document.getElementById('tab-role-siswa');
-            const tabGuru = document.getElementById('tab-role-guru');
-            const formSiswa = document.getElementById('form-login-siswa');
-            const formGuru = document.getElementById('form-login-guru');
+            const roles = ['siswa', 'pj', 'guru'];
+            const activeColors = {
+                siswa: 'bg-emerald-700 text-white shadow-sm',
+                pj: 'bg-teal-700 text-white shadow-sm',
+                guru: 'bg-gold-500 text-white shadow-sm'
+            };
 
-            if (role === 'siswa') {
-                tabSiswa.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-2";
-                tabGuru.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2";
-                formSiswa.classList.remove('hidden');
-                formGuru.classList.add('hidden');
-            } else {
-                tabGuru.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-gold-500 text-white shadow-sm transition flex items-center justify-center gap-2";
-                tabSiswa.className = "py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-2";
-                formGuru.classList.remove('hidden');
-                formSiswa.classList.add('hidden');
-            }
+            roles.forEach(r => {
+                const tab = document.getElementById(`tab-role-${r}`);
+                const form = document.getElementById(`form-login-${r}`);
+                if (r === role) {
+                    tab.className = `py-2.5 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${activeColors[r]}`;
+                    form.classList.remove('hidden');
+                } else {
+                    tab.className = "py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-1.5";
+                    form.classList.add('hidden');
+                }
+            });
         }
 
         function generateStudentId(name, kelas) {
@@ -735,6 +962,28 @@
             initAppWorkspace();
         }
 
+        async function handlePjLogin(event) {
+            event.preventDefault();
+            const pjName = document.getElementById('login-pj-nama').value.trim();
+            const kelasInput = document.getElementById('login-pj-kelas').value.trim().toUpperCase();
+            const pjPass = document.getElementById('login-pj-pass').value.trim();
+
+            if (!pjName || !kelasInput) return;
+            if (pjPass !== PJ_PASSWORD) {
+                showToast(`Password PJ salah! Gunakan password: ${PJ_PASSWORD}`, 'error');
+                return;
+            }
+
+            showToast(`Memuat data setoran Kelas ${kelasInput}...`, 'info');
+            await fetchAllStudentsFromSheet();
+
+            currentSession = { role: 'pj', name: pjName, kelas: kelasInput };
+            safeStorageSet(SESSION_KEY, currentSession);
+
+            showToast(`Selamat bertugas, PJ ${pjName} (Kelas ${kelasInput})!`, 'success');
+            initAppWorkspace();
+        }
+
         async function handleGuruLogin(event) {
             event.preventDefault();
             const guruName = document.getElementById('login-guru-nama').value.trim();
@@ -757,9 +1006,16 @@
 
         function quickDemoLogin(role) {
             if (role === 'siswa') {
+                switchLoginRole('siswa');
                 document.getElementById('login-siswa-nama').value = 'Ahmad Fauzi';
                 document.getElementById('login-siswa-kelas').value = '7A';
                 document.getElementById('form-login-siswa').dispatchEvent(new Event('submit'));
+            } else if (role === 'pj') {
+                switchLoginRole('pj');
+                document.getElementById('login-pj-nama').value = 'Budi Santoso';
+                document.getElementById('login-pj-kelas').value = '7A';
+                document.getElementById('login-pj-pass').value = PJ_PASSWORD;
+                document.getElementById('form-login-pj').dispatchEvent(new Event('submit'));
             } else {
                 switchLoginRole('guru');
                 document.getElementById('login-guru-nama').value = 'Ustadz Rahmat';
@@ -773,6 +1029,7 @@
             currentSession = null;
             localStorage.removeItem(SESSION_KEY);
             document.getElementById('siswa-workspace').classList.add('hidden');
+            document.getElementById('pj-workspace').classList.add('hidden');
             document.getElementById('guru-workspace').classList.add('hidden');
             document.getElementById('view-login').classList.remove('hidden');
             showToast('Anda telah keluar dari akun.', 'info');
@@ -786,9 +1043,11 @@
             }
 
             document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('siswa-workspace').classList.add('hidden');
+            document.getElementById('pj-workspace').classList.add('hidden');
+            document.getElementById('guru-workspace').classList.add('hidden');
 
             if (currentSession.role === 'siswa') {
-                document.getElementById('guru-workspace').classList.add('hidden');
                 document.getElementById('siswa-workspace').classList.remove('hidden');
                 document.getElementById('header-siswa-badge').textContent = `${currentSession.name} • Kelas ${currentSession.kelas}`;
                 document.getElementById('daily-target-input').value = appState.dailyTarget || '';
@@ -805,12 +1064,160 @@
 
                 updateGlobalProgressUI();
                 switchView('list');
+            } else if (currentSession.role === 'pj') {
+                document.getElementById('pj-workspace').classList.remove('hidden');
+                document.getElementById('header-pj-kelas-badge').textContent = `Kelas ${currentSession.kelas}`;
+                document.getElementById('header-pj-name').textContent = `PJ Siswa: ${currentSession.name}`;
+                renderPjDashboard();
             } else if (currentSession.role === 'guru') {
-                document.getElementById('siswa-workspace').classList.add('hidden');
                 document.getElementById('guru-workspace').classList.remove('hidden');
                 document.getElementById('header-guru-name').textContent = `Selamat datang, ${currentSession.name}`;
                 renderGuruDashboard();
             }
+        }
+
+        // ========================================================================
+        // FUNGSI WORKSPACE PJ SISWA (PEMILIHAN & MONITORING SETORAN KELAS)
+        // ========================================================================
+
+        async function refreshPjData() {
+            showToast('Menyegarkan data kelas dari Spreadsheet...', 'info');
+            await fetchAllStudentsFromSheet();
+            renderPjDashboard();
+            showToast('Data kelas berhasil diperbarui!', 'success');
+        }
+
+        function setPjFilter(filter) {
+            appState.pjFilter = filter;
+            ['ALL', 'SUDAH', 'BELUM'].forEach(f => {
+                const btn = document.getElementById(`pj-filter-${f}`);
+                if (f === filter) {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold bg-teal-700 text-white transition";
+                } else {
+                    btn.className = "px-3 py-2 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition";
+                }
+            });
+            renderPjStudentTable();
+        }
+
+        function renderPjDashboard() {
+            if (!currentSession || currentSession.role !== 'pj') return;
+            const targetKelas = currentSession.kelas.toUpperCase();
+            const classStudents = Object.values(allStudentsCache).filter(
+                s => (s.kelas || '').toUpperCase() === targetKelas
+            );
+
+            const sudahCount = classStudents.filter(s => hasStudentSetoran(s)).length;
+            const belumCount = classStudents.length - sudahCount;
+
+            document.getElementById('pj-stat-total').textContent = classStudents.length;
+            document.getElementById('pj-stat-sudah').textContent = sudahCount;
+            document.getElementById('pj-stat-belum').textContent = belumCount;
+
+            renderPjStudentTable();
+        }
+
+        function renderPjStudentTable() {
+            if (!currentSession || currentSession.role !== 'pj') return;
+            const tbody = document.getElementById('pj-student-tbody');
+            const search = (document.getElementById('pj-search-siswa').value || '').toLowerCase();
+            const targetKelas = currentSession.kelas.toUpperCase();
+
+            const filtered = Object.values(allStudentsCache).filter(s => {
+                if ((s.kelas || '').toUpperCase() !== targetKelas) return false;
+                if (search && !(s.name || '').toLowerCase().includes(search)) return false;
+                const sudah = hasStudentSetoran(s);
+                if (appState.pjFilter === 'SUDAH' && !sudah) return false;
+                if (appState.pjFilter === 'BELUM' && sudah) return false;
+                return true;
+            });
+
+            tbody.innerHTML = '';
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-xs">Tidak ada siswa yang sesuai di Kelas ${targetKelas}.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(s => {
+                const sudah = hasStudentSetoran(s);
+                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+
+                const statusBadge = sudah
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i>Sudah Setoran</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400"><i class="fa-solid fa-clock"></i>Belum Setoran</span>`;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${s.name}</td>
+                    <td class="py-3.5 px-4">${statusBadge}</td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-teal-600" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="text-xs font-bold">${hafalCount}/37 (${percent}%)</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-slate-500">${s.lastUpdated || '-'}</td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button type="button" onclick="openGuruEvalModal('${s.studentId}')" class="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-sm transition inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-hand-pointer"></i>
+                            <span>Pilih Setoran</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openPjAddStudentModal() {
+            if (!currentSession || currentSession.role !== 'pj') return;
+            document.getElementById('pj-new-student-name').value = '';
+            document.getElementById('pj-modal-kelas-label').textContent = currentSession.kelas;
+            document.getElementById('pj-add-student-modal').classList.remove('hidden');
+        }
+
+        function closePjAddStudentModal() {
+            document.getElementById('pj-add-student-modal').classList.add('hidden');
+        }
+
+        async function handlePjAddStudent(event) {
+            event.preventDefault();
+            if (!currentSession || currentSession.role !== 'pj') return;
+
+            const name = document.getElementById('pj-new-student-name').value.trim();
+            const kelas = currentSession.kelas.toUpperCase();
+            if (!name) return;
+
+            const studentId = generateStudentId(name, kelas);
+            if (allStudentsCache[studentId]) {
+                showToast('Siswa dengan nama tersebut sudah terdaftar di kelas ini.', 'warning');
+                return;
+            }
+
+            const newStudent = {
+                studentId: studentId,
+                name: name,
+                kelas: kelas,
+                progress: {},
+                ayahHafal: {},
+                notes: {},
+                dailyTarget: '',
+                teacherFeedback: '',
+                teacherFeedbackDate: '',
+                lastUpdated: new Date().toLocaleString('id-ID', {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                })
+            };
+
+            closePjAddStudentModal();
+            showToast(`Menambahkan ${name} ke Kelas ${kelas}...`, 'info');
+            await syncStudentToSheet(newStudent);
+            renderPjDashboard();
+            showToast(`${name} berhasil ditambahkan!`, 'success');
         }
 
         // ========================================================================
@@ -1096,26 +1503,28 @@
         function renderGuruDashboard() {
             const students = Object.values(allStudentsCache);
             const totalSiswa = students.length;
-            let totalSurahTuntas = 0;
+            let sudahSetoranCount = 0;
             let sumPercent = 0;
 
             const kelasSet = new Set();
             students.forEach(s => {
                 if (s.kelas) kelasSet.add(s.kelas.toUpperCase());
+                if (hasStudentSetoran(s)) sudahSetoranCount++;
                 const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                totalSurahTuntas += hafalCount;
                 sumPercent += Math.round((hafalCount / 37) * 100);
             });
 
+            const belumSetoranCount = totalSiswa - sudahSetoranCount;
             const avgPercent = totalSiswa > 0 ? Math.round(sumPercent / totalSiswa) : 0;
 
             document.getElementById('guru-stat-total-siswa').textContent = totalSiswa;
+            document.getElementById('guru-stat-sudah-setoran').textContent = sudahSetoranCount;
+            document.getElementById('guru-stat-belum-setoran').textContent = belumSetoranCount;
             document.getElementById('guru-stat-avg-progress').textContent = `${avgPercent}%`;
-            document.getElementById('guru-stat-total-surah').textContent = totalSurahTuntas;
 
             const filterSelect = document.getElementById('guru-filter-kelas');
             const currentVal = filterSelect.value;
-            filterSelect.innerHTML = `<option value="ALL">Semua Kelas</option>`;
+            filterSelect.innerHTML = `<option value="ALL">Semua Kelas (${kelasSet.size})</option>`;
             Array.from(kelasSet).sort().forEach(kls => {
                 filterSelect.innerHTML += `<option value="${kls}">Kelas ${kls}</option>`;
             });
@@ -1128,29 +1537,38 @@
             const tbody = document.getElementById('guru-student-tbody');
             const search = (document.getElementById('guru-search-siswa').value || '').toLowerCase();
             const filterKelas = document.getElementById('guru-filter-kelas').value;
+            const filterSetoran = document.getElementById('guru-filter-setoran').value;
             const students = Object.values(allStudentsCache);
 
             tbody.innerHTML = '';
             const filtered = students.filter(s => {
                 const matchName = (s.name || '').toLowerCase().includes(search);
                 const matchKelas = filterKelas === 'ALL' || (s.kelas || '').toUpperCase() === filterKelas;
-                return matchName && matchKelas;
+                const sudah = hasStudentSetoran(s);
+                const matchSetoran = filterSetoran === 'ALL' || (filterSetoran === 'SUDAH' && sudah) || (filterSetoran === 'BELUM' && !sudah);
+                return matchName && matchKelas && matchSetoran;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-xs">Belum ada data siswa yang sesuai.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-xs">Belum ada data siswa yang sesuai.</td></tr>`;
                 return;
             }
 
             filtered.forEach(s => {
+                const sudah = hasStudentSetoran(s);
                 const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
                 const percent = Math.round((hafalCount / 37) * 100);
+
+                const setoranBadge = sudah
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i>Sudah Setoran</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400"><i class="fa-solid fa-clock"></i>Belum Setoran</span>`;
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition";
                 tr.innerHTML = `
                     <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${s.name}</td>
                     <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">${s.kelas}</span></td>
+                    <td class="py-3.5 px-4">${setoranBadge}</td>
                     <td class="py-3.5 px-4">
                         <div class="flex items-center gap-2">
                             <div class="w-24 h-2 bg-sand-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -1177,7 +1595,15 @@
             appState.evaluatingStudentId = studentId;
             document.getElementById('eval-modal-siswa-name').textContent = student.name;
             document.getElementById('eval-modal-siswa-kelas').textContent = `Kelas ${student.kelas}`;
-            document.getElementById('eval-teacher-feedback-input').value = student.teacherFeedback || '';
+
+            // Tampilkan kotak catatan evaluasi hanya jika yang login adalah Guru
+            const feedbackSection = document.getElementById('eval-teacher-feedback-section');
+            if (currentSession && currentSession.role === 'guru') {
+                feedbackSection.classList.remove('hidden');
+                document.getElementById('eval-teacher-feedback-input').value = student.teacherFeedback || '';
+            } else {
+                feedbackSection.classList.add('hidden');
+            }
 
             renderEvalSurahList();
             document.getElementById('guru-eval-modal').classList.remove('hidden');
@@ -1186,7 +1612,11 @@
         function closeGuruEvalModal() {
             document.getElementById('guru-eval-modal').classList.add('hidden');
             appState.evaluatingStudentId = null;
-            renderGuruDashboard();
+            if (currentSession && currentSession.role === 'pj') {
+                renderPjDashboard();
+            } else {
+                renderGuruDashboard();
+            }
         }
 
         function renderEvalSurahList() {
@@ -1353,14 +1783,17 @@
             const html = document.documentElement;
             const icon1 = document.getElementById('theme-icon');
             const icon2 = document.getElementById('theme-icon-guru');
+            const icon3 = document.getElementById('theme-icon-pj');
             if (appState.darkMode) {
                 html.classList.add('dark');
                 if (icon1) icon1.className = 'fa-solid fa-sun';
                 if (icon2) icon2.className = 'fa-solid fa-sun';
+                if (icon3) icon3.className = 'fa-solid fa-sun';
             } else {
                 html.classList.remove('dark');
                 if (icon1) icon1.className = 'fa-solid fa-moon';
                 if (icon2) icon2.className = 'fa-solid fa-moon';
+                if (icon3) icon3.className = 'fa-solid fa-moon';
             }
         }
 
