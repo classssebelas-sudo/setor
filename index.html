@@ -86,7 +86,7 @@
     <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- ========================================================================
-         BAGIAN 1: HALAMAN GERBANG LOGIN (SISWA & GURU)
+         BAGIAN 1: HALAMAN GERBANG LOGIN (SISWA, PJ SISWA & GURU)
          ======================================================================== -->
     <section id="view-login" class="flex-1 flex items-center justify-center p-4 sm:p-6 islamic-pattern bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-950">
         <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-emerald-700/30 overflow-hidden">
@@ -137,10 +137,10 @@
                         <label for="login-siswa-kelas" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Password / Kelas</label>
                         <div class="relative">
                             <i class="fa-solid fa-school absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                            <input type="text" id="login-siswa-kelas" required placeholder="Contoh: XI Sosek 1, XI Saintek 1, atau XII Sain 1" 
+                            <input type="text" id="login-siswa-kelas" required placeholder="Contoh: 7A, 8B, atau 9C" 
                                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-emerald-600">
                         </div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Gunakan nama kelas sebagai kata sandi</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Gunakan nama kelas sebagai kata sandi masuk agar progres otomatis masuk ke tab kelasmu di Spreadsheet.</p>
                     </div>
 
                     <button type="submit" class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-700/20 transition flex items-center justify-center gap-2">
@@ -150,7 +150,7 @@
 
                     <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
                         <button type="button" onclick="quickDemoLogin('siswa')" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
-                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - XI)
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - 7A)
                         </button>
                     </div>
                 </form>
@@ -194,7 +194,7 @@
 
                     <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
                         <button type="button" onclick="quickDemoLogin('pj')" class="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline">
-                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo PJ Siswa (Kelas XI)
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo PJ Siswa (Kelas 7A)
                         </button>
                     </div>
                 </form>
@@ -673,7 +673,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h3 id="eval-modal-siswa-name" class="font-bold text-lg">Nama Siswa</h3>
-                        <span id="eval-modal-siswa-kelas" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gold-500/25 text-gold-300 border border-gold-400/40">Kelas XI</span>
+                        <span id="eval-modal-siswa-kelas" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-gold-500/25 text-gold-300 border border-gold-400/40">Kelas 7A</span>
                     </div>
                     <p id="eval-modal-siswa-summary" class="text-xs text-emerald-200 mt-0.5">Progres: 0/37 Surat Hafal (0%)</p>
                 </div>
@@ -696,20 +696,20 @@
                 </div>
             </div>
 
-            <!-- Grid Validasi 37 Surat Juz 30 -->
+            <!-- Grid Validasi 37 Surat Juz 30 & Tampilan Seluruh Ayat -->
             <div class="p-4 sm:p-6 overflow-y-auto flex-1">
                 <!-- Tampilan Daftar 37 Surat -->
                 <div id="eval-surah-list-view">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Validasi Status Hafalan 37 Surat Juz 30</h4>
-                        <span id="eval-surah-hint" class="text-[11px] text-slate-400">Klik kartu surat untuk mengubah status setoran (Belum / Proses / Hafal)</span>
+                        <span id="eval-surah-hint" class="text-[11px] text-slate-400">Klik nama surat untuk menampilkan seluruh ayat dan menilai tasmi'</span>
                     </div>
                     <div id="eval-surah-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                         <!-- Diisi secara dinamis oleh JavaScript -->
                     </div>
                 </div>
 
-                <!-- Tampilan Ayat Surat untuk Menyimak Setoran (Khusus PJ Siswa) -->
+                <!-- Tampilan Seluruh Ayat Surat untuk Menyimak Setoran / Penilaian Tasmi' (Guru & PJ Siswa) -->
                 <div id="eval-ayah-view" class="hidden space-y-4">
                     <!-- Header Kontrol Surat & Status Setoran -->
                     <div class="bg-sand-50 dark:bg-slate-800/80 p-4 rounded-2xl border border-sand-200 dark:border-slate-700 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
@@ -740,7 +740,7 @@
                         </div>
                     </div>
 
-                    <!-- Daftar Ayat untuk Disimak PJ Siswa -->
+                    <!-- Daftar Seluruh Ayat untuk Disimak Guru / PJ Siswa -->
                     <div id="eval-ayah-container" class="space-y-3">
                         <!-- Diisi secara dinamis oleh JavaScript -->
                     </div>
@@ -772,7 +772,7 @@
                         class="w-full px-4 py-2.5 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
                 </div>
                 <p class="text-[11px] text-slate-500 dark:text-slate-400">
-                    Siswa akan otomatis ditambahkan ke kelas <strong id="pj-modal-kelas-label">-</strong> dengan status awal <strong>Belum Setoran</strong>, dan langsung tersimpan ke database.
+                    Siswa akan otomatis ditambahkan ke kelas <strong id="pj-modal-kelas-label">-</strong> dengan status awal <strong>Belum Setoran</strong>, dan langsung tersimpan ke Spreadsheet.
                 </p>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="closePjAddStudentModal()" class="px-4 py-2 rounded-xl bg-sand-100 dark:bg-slate-800 text-xs font-bold">Batal</button>
@@ -830,7 +830,7 @@
         ];
 
         // ========================================================================
-        // 2. KONFIGURASI GOOGLE SPREADSHEET & STATE APLIKASI
+        // 2. KONFIGURASI GOOGLE SPREADSHEET & HELPER PENYIMPANAN AMAN
         // ========================================================================
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDEWmnoS-LXRHMDLW1OtZEyUIQXd2a5zRhiVOAKImjBWzwQfw0_SLVEABAj_GiGiko-g/exec';
         const PJ_PASSWORD = 'pj';
@@ -839,6 +839,23 @@
         const DB_USERS_KEY = 'juz30_all_students_db';
         const DB_LOGIN_USERS_KEY = 'juz30_login_users_db';
         const SESSION_KEY = 'juz30_active_session';
+
+        function safeStorageGet(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (err) {
+                return fallback;
+            }
+        }
+
+        function safeStorageSet(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (err) {
+                console.warn('Gagal menyimpan ke localStorage:', err);
+            }
+        }
 
         let currentSession = safeStorageGet(SESSION_KEY, null);
         let allStudentsCache = safeStorageGet(DB_USERS_KEY, {});
@@ -884,6 +901,7 @@
                     lastUpdated: '-'
                 }
             };
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
         }
 
         let appState = {
@@ -908,13 +926,1034 @@
 
         const audioPlayer = document.getElementById('quran-audio-player');
 
-        // ========================================================================
-        // 3. FUNGSI PEMBANTU MODAL SETORAN (PJ SISWA & GURU)
-        // ========================================================================
+        function generateStudentId(name, kelas) {
+            const cleanName = String(name || '').trim().toLowerCase().replace(/\s+/g, '_');
+            const cleanKelas = String(kelas || '').trim().toLowerCase().replace(/\s+/g, '');
+            return `${cleanName}__${cleanKelas}`;
+        }
 
-        /**
-         * Mengecek apakah siswa sudah memiliki catatan setoran (minimal 1 surat proses/hafal atau 1 ayat lulus)
-         */
+        function formatNowIndonesian() {
+            try {
+                return new Date().toLocaleString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return 'Baru saja';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            let bgClass = 'bg-emerald-800 text-white border-emerald-600';
+            let iconClass = 'fa-circle-check text-gold-400';
+
+            if (type === 'error') {
+                bgClass = 'bg-rose-700 text-white border-rose-500';
+                iconClass = 'fa-circle-exclamation text-white';
+            } else if (type === 'info') {
+                bgClass = 'bg-slate-800 text-white border-slate-600';
+                iconClass = 'fa-circle-info text-sky-400';
+            }
+
+            toast.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl border ${bgClass} text-xs font-semibold flex items-center gap-2.5 transform transition-all duration-300 translate-x-4 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${iconClass} text-sm"></i><span>${message}</span>`;
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-4', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-x-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3200);
+        }
+
+        function applyDarkMode() {
+            const htmlEl = document.documentElement;
+            const icons = ['theme-icon', 'theme-icon-pj', 'theme-icon-guru'];
+            if (appState.darkMode) {
+                htmlEl.classList.add('dark');
+                icons.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.className = 'fa-solid fa-sun text-gold-400';
+                });
+            } else {
+                htmlEl.classList.remove('dark');
+                icons.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.className = 'fa-solid fa-moon';
+                });
+            }
+        }
+
+        function toggleDarkMode() {
+            appState.darkMode = !appState.darkMode;
+            localStorage.setItem('juz30_dark_mode', appState.darkMode);
+            applyDarkMode();
+        }
+
+        // ========================================================================
+        // 3. SINKRONISASI GOOGLE SPREADSHEET (GET & POST)
+        // ========================================================================
+        async function syncFromGoogleSpreadsheet(silent = false) {
+            if (!GOOGLE_SCRIPT_URL) return;
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const result = await response.json();
+
+                if (result && result.status === 'success') {
+                    if (result.students && typeof result.students === 'object') {
+                        allStudentsCache = { ...allStudentsCache, ...result.students };
+                        safeStorageSet(DB_USERS_KEY, allStudentsCache);
+                    }
+                    if (Array.isArray(result.users)) {
+                        loginUsersCache = result.users;
+                        safeStorageSet(DB_LOGIN_USERS_KEY, loginUsersCache);
+                    }
+                    if (!silent) {
+                        showToast('Data berhasil disinkronkan dari Google Spreadsheet');
+                    }
+                }
+            } catch (error) {
+                console.warn('Mode offline / fallback lokal:', error);
+                if (!silent) {
+                    showToast('Menggunakan penyimpanan lokal perangkat', 'info');
+                }
+            }
+        }
+
+        async function syncStudentToGoogleSpreadsheet(studentObj) {
+            if (!GOOGLE_SCRIPT_URL || !studentObj) return;
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student: studentObj })
+                });
+            } catch (error) {
+                console.warn('Gagal mengirim pembaruan ke Spreadsheet:', error);
+            }
+        }
+
+        // ========================================================================
+        // 4. LOGIKA LOGIN & NAVIGASI PERAN (SISWA, PJ SISWA & GURU)
+        // ========================================================================
+        function toggleStaffLoginTabs() {
+            appState.isStaffTabsVisible = !appState.isStaffTabsVisible;
+            const tabs = document.getElementById('login-role-tabs');
+            const dot = document.getElementById('secret-dot-indicator');
+
+            if (appState.isStaffTabsVisible) {
+                tabs.classList.remove('hidden');
+                dot.classList.add('bg-gold-400', 'scale-125');
+                showToast('Menu akses PJ Siswa & Guru dibuka', 'info');
+            } else {
+                tabs.classList.add('hidden');
+                dot.classList.remove('bg-gold-400', 'scale-125');
+                switchLoginRole('siswa');
+            }
+        }
+
+        function switchLoginRole(role) {
+            const roles = ['siswa', 'pj', 'guru'];
+            roles.forEach(r => {
+                const form = document.getElementById(`form-login-${r}`);
+                const tab = document.getElementById(`tab-role-${r}`);
+                if (r === role) {
+                    form.classList.remove('hidden');
+                    tab.className = 'py-2.5 px-2 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-1.5';
+                } else {
+                    form.classList.add('hidden');
+                    tab.className = 'py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-1.5';
+                }
+            });
+        }
+
+        function handleSiswaLogin(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('login-siswa-nama').value.trim();
+            const kelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
+
+            if (!nameInput || !kelasInput) return;
+
+            const studentId = generateStudentId(nameInput, kelasInput);
+            if (!allStudentsCache[studentId]) {
+                allStudentsCache[studentId] = {
+                    studentId: studentId,
+                    name: nameInput,
+                    kelas: kelasInput,
+                    progress: {},
+                    ayahHafal: {},
+                    notes: {},
+                    dailyTarget: '',
+                    teacherFeedback: '',
+                    teacherFeedbackDate: '',
+                    lastUpdated: formatNowIndonesian()
+                };
+                safeStorageSet(DB_USERS_KEY, allStudentsCache);
+                syncStudentToGoogleSpreadsheet(allStudentsCache[studentId]);
+            }
+
+            currentSession = {
+                role: 'siswa',
+                studentId: studentId,
+                name: allStudentsCache[studentId].name,
+                kelas: kelasInput
+            };
+            safeStorageSet(SESSION_KEY, currentSession);
+            initializeActiveSession();
+            showToast(`Ahlan wa sahlan, ${currentSession.name}!`);
+        }
+
+        function handlePjLogin(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('login-pj-nama').value.trim();
+            const kelasInput = document.getElementById('login-pj-kelas').value.trim().toUpperCase();
+            const passInput = document.getElementById('login-pj-pass').value.trim();
+
+            const matchedUser = loginUsersCache.find(
+                u => u.role === 'pj' && u.name.toLowerCase() === nameInput.toLowerCase() && u.password === passInput
+            );
+
+            if (passInput !== PJ_PASSWORD && !matchedUser) {
+                showToast('Password PJ Siswa salah! Gunakan password demo: pj', 'error');
+                return;
+            }
+
+            currentSession = {
+                role: 'pj',
+                name: nameInput,
+                kelas: kelasInput
+            };
+            safeStorageSet(SESSION_KEY, currentSession);
+            initializeActiveSession();
+            showToast(`Masuk sebagai PJ Setoran Kelas ${kelasInput}`);
+        }
+
+        function handleGuruLogin(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('login-guru-nama').value.trim();
+            const passInput = document.getElementById('login-guru-pass').value.trim();
+
+            const matchedUser = loginUsersCache.find(
+                u => u.role === 'guru' && u.name.toLowerCase() === nameInput.toLowerCase() && u.password === passInput
+            );
+
+            if (passInput !== GURU_PASSWORD && !matchedUser) {
+                showToast('Password Guru salah! Gunakan password demo: guru', 'error');
+                return;
+            }
+
+            currentSession = {
+                role: 'guru',
+                name: nameInput
+            };
+            safeStorageSet(SESSION_KEY, currentSession);
+            initializeActiveSession();
+            showToast(`Selamat datang, ${nameInput}`);
+        }
+
+        function quickDemoLogin(role) {
+            if (role === 'siswa') {
+                document.getElementById('login-siswa-nama').value = 'Ahmad Fauzi';
+                document.getElementById('login-siswa-kelas').value = '7A';
+                handleSiswaLogin(new Event('submit'));
+            } else if (role === 'pj') {
+                document.getElementById('login-pj-nama').value = 'Budi Santoso';
+                document.getElementById('login-pj-kelas').value = '7A';
+                document.getElementById('login-pj-pass').value = PJ_PASSWORD;
+                handlePjLogin(new Event('submit'));
+            } else if (role === 'guru') {
+                document.getElementById('login-guru-nama').value = 'Ustadz Rahmat';
+                document.getElementById('login-guru-pass').value = GURU_PASSWORD;
+                handleGuruLogin(new Event('submit'));
+            }
+        }
+
+        function logoutUser() {
+            stopAudioPlayback();
+            currentSession = null;
+            localStorage.removeItem(SESSION_KEY);
+
+            document.getElementById('siswa-workspace').classList.add('hidden');
+            document.getElementById('pj-workspace').classList.add('hidden');
+            document.getElementById('guru-workspace').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+            showToast('Anda telah keluar dari akun', 'info');
+        }
+
+        function initializeActiveSession() {
+            if (!currentSession) {
+                document.getElementById('view-login').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('siswa-workspace').classList.add('hidden');
+            document.getElementById('pj-workspace').classList.add('hidden');
+            document.getElementById('guru-workspace').classList.add('hidden');
+
+            if (currentSession.role === 'siswa') {
+                loadSiswaWorkspace();
+            } else if (currentSession.role === 'pj') {
+                loadPjWorkspace();
+            } else if (currentSession.role === 'guru') {
+                loadGuruWorkspace();
+            }
+        }
+
+        // ========================================================================
+        // 5. WORKSPACE SISWA: DAFTAR 37 SURAT & MODE MENGHAFAL INTERAKTIF
+        // ========================================================================
+        function loadSiswaWorkspace() {
+            const ws = document.getElementById('siswa-workspace');
+            ws.classList.remove('hidden');
+
+            const student = allStudentsCache[currentSession.studentId] || {
+                studentId: currentSession.studentId,
+                name: currentSession.name,
+                kelas: currentSession.kelas,
+                progress: {},
+                ayahHafal: {},
+                notes: {},
+                dailyTarget: '',
+                teacherFeedback: '',
+                teacherFeedbackDate: ''
+            };
+
+            appState.progress = student.progress || {};
+            appState.ayahHafal = student.ayahHafal || {};
+            appState.notes = student.notes || {};
+            appState.dailyTarget = student.dailyTarget || '';
+
+            document.getElementById('header-siswa-badge').textContent = `${student.name} • Kelas ${student.kelas}`;
+            document.getElementById('daily-target-input').value = appState.dailyTarget;
+
+            const feedbackBanner = document.getElementById('siswa-teacher-feedback-banner');
+            if (student.teacherFeedback && student.teacherFeedback.trim() !== '') {
+                feedbackBanner.classList.remove('hidden');
+                document.getElementById('siswa-teacher-feedback-text').textContent = student.teacherFeedback;
+                document.getElementById('siswa-teacher-feedback-date').textContent = student.teacherFeedbackDate || '';
+            } else {
+                feedbackBanner.classList.add('hidden');
+            }
+
+            updateSiswaHeaderStats();
+            switchView('list');
+        }
+
+        function persistCurrentSiswaState() {
+            if (!currentSession || currentSession.role !== 'siswa') return;
+            const studentId = currentSession.studentId;
+            const existing = allStudentsCache[studentId] || {
+                studentId: studentId,
+                name: currentSession.name,
+                kelas: currentSession.kelas
+            };
+
+            existing.progress = appState.progress;
+            existing.ayahHafal = appState.ayahHafal;
+            existing.notes = appState.notes;
+            existing.dailyTarget = appState.dailyTarget;
+            existing.lastUpdated = formatNowIndonesian();
+
+            allStudentsCache[studentId] = existing;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(existing);
+        }
+
+        function updateSiswaHeaderStats() {
+            const hafalCount = Object.values(appState.progress).filter(s => s === 'hafal').length;
+            const percent = Math.round((hafalCount / 37) * 100);
+
+            document.getElementById('stat-hafal-count').textContent = hafalCount;
+            document.getElementById('stat-percentage').textContent = `${percent}%`;
+            document.getElementById('global-progress-bar').style.width = `${percent}%`;
+        }
+
+        function saveDailyTarget(value) {
+            appState.dailyTarget = value.trim();
+            persistCurrentSiswaState();
+            showToast('Target harian tersimpan');
+        }
+
+        function switchView(viewName) {
+            stopAudioPlayback();
+            if (viewName === 'list') {
+                document.getElementById('view-surah-list').classList.remove('hidden');
+                document.getElementById('view-surah-detail').classList.add('hidden');
+                renderSurahGrid();
+            } else {
+                document.getElementById('view-surah-list').classList.add('hidden');
+                document.getElementById('view-surah-detail').classList.remove('hidden');
+            }
+        }
+
+        function setSurahFilter(filter) {
+            appState.currentFilter = filter;
+            const filters = ['all', 'hafal', 'proses', 'belum'];
+            filters.forEach(f => {
+                const btn = document.getElementById(`filter-btn-${f}`);
+                if (f === filter) {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100 transition';
+                }
+            });
+            renderSurahGrid();
+        }
+
+        function renderSurahGrid() {
+            const grid = document.getElementById('surah-grid');
+            const query = (document.getElementById('surah-search-input').value || '').toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = JUZ_30_SURAHS.filter(surah => {
+                const status = appState.progress[surah.number] || 'belum';
+                const matchesFilter = appState.currentFilter === 'all' || status === appState.currentFilter;
+                const matchesSearch = surah.name.toLowerCase().includes(query) || surah.meaning.toLowerCase().includes(query);
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800">
+                        <p class="text-sm text-slate-500">Tidak ada surat yang sesuai dengan pencarian atau filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(surah => {
+                const status = appState.progress[surah.number] || 'belum';
+                const passedAyahs = (appState.ayahHafal[surah.number] || []).length;
+
+                let statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Belum</span>';
+                let cardBorder = 'border-sand-200 dark:border-slate-800';
+
+                if (status === 'hafal') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">Hafal ✓</span>';
+                    cardBorder = 'border-emerald-300 dark:border-emerald-800';
+                } else if (status === 'proses') {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400">Proses</span>';
+                    cardBorder = 'border-amber-300 dark:border-amber-800';
+                }
+
+                const card = document.createElement('div');
+                card.className = `bg-white dark:bg-slate-900 p-4 rounded-2xl border ${cardBorder} shadow-sm hover:shadow-md hover:border-emerald-500 transition cursor-pointer flex flex-col justify-between gap-3`;
+                card.onclick = () => openSurahDetail(surah.number);
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-200/70 dark:border-emerald-800/50">
+                                ${surah.number}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-900 dark:text-white">${surah.name}</h3>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">${surah.meaning} • ${surah.ayahs} Ayat</p>
+                            </div>
+                        </div>
+                        <div class="arabic-text text-2xl font-bold text-emerald-800 dark:text-emerald-400">${surah.arabic}</div>
+                    </div>
+
+                    <div class="pt-2.5 border-t border-sand-100 dark:border-slate-800 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-400">${passedAyahs}/${surah.ayahs} ayat lulus</span>
+                        ${statusBadge}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Mengambil seluruh ayat surat (Arab, Latin, Terjemahan Indonesia, & Audio Murottal)
+        async function fetchSurahWithAyahs(surahNumber) {
+            if (appState.cacheSurahs[surahNumber]) {
+                return appState.cacheSurahs[surahNumber];
+            }
+
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            try {
+                const url = `https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,en.transliteration,id.indonesian,ar.alafasy`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('Gagal memuat ayat dari server');
+                const json = await res.json();
+
+                if (json.code === 200 && Array.isArray(json.data) && json.data.length >= 4) {
+                    const arabAyahs = json.data[0].ayahs;
+                    const latinAyahs = json.data[1].ayahs;
+                    const transAyahs = json.data[2].ayahs;
+                    const audioAyahs = json.data[3].ayahs;
+
+                    const combinedAyahs = arabAyahs.map((item, idx) => ({
+                        numberInSurah: item.numberInSurah,
+                        arabic: item.text,
+                        latin: (latinAyahs[idx] && latinAyahs[idx].text) || '',
+                        translation: (transAyahs[idx] && transAyahs[idx].text) || '',
+                        audio: (audioAyahs[idx] && audioAyahs[idx].audio) || ''
+                    }));
+
+                    const surahPayload = {
+                        meta: meta,
+                        ayahs: combinedAyahs
+                    };
+                    appState.cacheSurahs[surahNumber] = surahPayload;
+                    return surahPayload;
+                }
+            } catch (err) {
+                console.warn('Fallback ayat offline:', err);
+            }
+
+            // Fallback jika internet terputus sehingga semua nomor ayat tetap bisa dinilai
+            const fallbackAyahs = Array.from({ length: meta.ayahs }, (_, i) => ({
+                numberInSurah: i + 1,
+                arabic: `الْآيَةُ ${i + 1} مِنْ سُورَةِ ${meta.arabic}`,
+                latin: `Ayat ke-${i + 1} QS. ${meta.name} (Mode Offline - periksa mushaf)`,
+                translation: `Terjemahan ayat ke-${i + 1} surat ${meta.name}.`,
+                audio: ''
+            }));
+
+            return { meta: meta, ayahs: fallbackAyahs };
+        }
+
+        async function openSurahDetail(surahNumber) {
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!meta) return;
+
+            appState.currentSurah = surahNumber;
+            switchView('detail');
+
+            document.getElementById('detail-surah-title').textContent = `QS. ${meta.name}`;
+            document.getElementById('detail-surah-meta').textContent = `${meta.meaning} • ${meta.ayahs} Ayat • ${meta.type}`;
+            document.getElementById('detail-surah-arabic').textContent = meta.arabic;
+            document.getElementById('detail-surah-status').value = appState.progress[surahNumber] || 'belum';
+            document.getElementById('detail-surah-note').value = appState.notes[surahNumber] || '';
+
+            const container = document.getElementById('ayah-list-container');
+            container.innerHTML = `
+                <div class="p-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-700 mb-2"></i>
+                    <p class="text-xs text-slate-500">Memuat seluruh ayat QS. ${meta.name}...</p>
+                </div>
+            `;
+
+            const surahData = await fetchSurahWithAyahs(surahNumber);
+            renderAyahList(surahData);
+        }
+
+        function renderAyahList(surahData) {
+            const container = document.getElementById('ayah-list-container');
+            const surahNumber = surahData.meta.number;
+            const passedList = appState.ayahHafal[surahNumber] || [];
+            container.innerHTML = '';
+
+            surahData.ayahs.forEach((ayah, idx) => {
+                const isPassed = passedList.includes(ayah.numberInSurah);
+                const blurClass = appState.hafalanMode ? 'blur-hafalan' : '';
+
+                const card = document.createElement('div');
+                card.id = `siswa-ayah-card-${ayah.numberInSurah}`;
+                card.className = `p-4 sm:p-5 rounded-2xl border ${isPassed ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-950/20' : 'border-sand-200 dark:border-slate-800 bg-white dark:bg-slate-900'} shadow-sm space-y-3 transition`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-700 text-white text-xs font-bold flex items-center justify-center">
+                            ${ayah.numberInSurah}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            ${ayah.audio ? `
+                                <button type="button" onclick="playSingleAyah('${ayah.audio}')" class="px-3 py-1.5 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-volume-high text-emerald-700"></i>
+                                    <span>Dengar</span>
+                                </button>
+                            ` : ''}
+                            <button type="button" onclick="toggleAyahHafal(${surahNumber}, ${ayah.numberInSurah})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${isPassed ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100'}">
+                                <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-check'}"></i>
+                                <span>${isPassed ? 'Hafal ✓' : 'Tandai Hafal'}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="arabic-text text-2xl sm:text-3xl text-slate-900 dark:text-white pt-1 ${blurClass}">
+                        ${ayah.arabic}
+                    </p>
+
+                    ${appState.showLatin ? `<p class="text-xs italic text-emerald-800 dark:text-emerald-400 ${blurClass}">${ayah.latin}</p>` : ''}
+                    ${appState.showTrans ? `<p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${ayah.translation}</p>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleAyahHafal(surahNumber, ayahNumber) {
+            if (!appState.ayahHafal[surahNumber]) {
+                appState.ayahHafal[surahNumber] = [];
+            }
+            const idx = appState.ayahHafal[surahNumber].indexOf(ayahNumber);
+            if (idx >= 0) {
+                appState.ayahHafal[surahNumber].splice(idx, 1);
+            } else {
+                appState.ayahHafal[surahNumber].push(ayahNumber);
+            }
+
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const totalPassed = appState.ayahHafal[surahNumber].length;
+            if (meta && totalPassed === meta.ayahs) {
+                appState.progress[surahNumber] = 'hafal';
+                document.getElementById('detail-surah-status').value = 'hafal';
+            } else if (totalPassed > 0 && (appState.progress[surahNumber] || 'belum') === 'belum') {
+                appState.progress[surahNumber] = 'proses';
+                document.getElementById('detail-surah-status').value = 'proses';
+            }
+
+            updateSiswaHeaderStats();
+            persistCurrentSiswaState();
+
+            const cached = appState.cacheSurahs[surahNumber];
+            if (cached) renderAyahList(cached);
+        }
+
+        function playSingleAyah(audioUrl) {
+            if (!audioUrl) return;
+            appState.isPlayingAll = false;
+            updatePlayAllButtonUI();
+            audioPlayer.src = audioUrl;
+            audioPlayer.play().catch(() => showToast('Klik sekali lagi untuk memutar audio', 'info'));
+        }
+
+        function stopAudioPlayback() {
+            appState.isPlayingAll = false;
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            updatePlayAllButtonUI();
+        }
+
+        function updatePlayAllButtonUI() {
+            const icon = document.getElementById('icon-play-all');
+            const text = document.getElementById('text-play-all');
+            if (!icon || !text) return;
+
+            if (appState.isPlayingAll) {
+                icon.className = 'fa-solid fa-stop';
+                text.textContent = 'Hentikan Audio';
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.textContent = 'Putar Semua Ayat';
+            }
+        }
+
+        async function togglePlayAllSurah() {
+            if (appState.isPlayingAll) {
+                stopAudioPlayback();
+                return;
+            }
+
+            const surahData = await fetchSurahWithAyahs(appState.currentSurah);
+            const playable = surahData.ayahs.filter(a => a.audio);
+            if (playable.length === 0) {
+                showToast('Audio murottal belum tersedia dalam mode offline', 'info');
+                return;
+            }
+
+            appState.isPlayingAll = true;
+            appState.playAllIndex = 0;
+            updatePlayAllButtonUI();
+
+            const playNext = () => {
+                if (!appState.isPlayingAll || appState.playAllIndex >= playable.length) {
+                    stopAudioPlayback();
+                    return;
+                }
+                const currentAyah = playable[appState.playAllIndex];
+                audioPlayer.src = currentAyah.audio;
+                audioPlayer.play().catch(() => stopAudioPlayback());
+                appState.playAllIndex++;
+            };
+
+            audioPlayer.onended = playNext;
+            playNext();
+        }
+
+        async function toggleHafalanMode() {
+            appState.hafalanMode = !appState.hafalanMode;
+            const btn = document.getElementById('btn-toggle-hafalan');
+            if (appState.hafalanMode) {
+                btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white transition flex items-center gap-1.5';
+            } else {
+                btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-sand-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-amber-100 transition flex items-center gap-1.5';
+            }
+            const surahData = await fetchSurahWithAyahs(appState.currentSurah);
+            renderAyahList(surahData);
+        }
+
+        async function toggleLatinDisplay() {
+            appState.showLatin = !appState.showLatin;
+            document.getElementById('btn-toggle-latin').textContent = `Latin: ${appState.showLatin ? 'ON' : 'OFF'}`;
+            const surahData = await fetchSurahWithAyahs(appState.currentSurah);
+            renderAyahList(surahData);
+        }
+
+        async function toggleTransDisplay() {
+            appState.showTrans = !appState.showTrans;
+            document.getElementById('btn-toggle-trans').textContent = `Terjemah: ${appState.showTrans ? 'ON' : 'OFF'}`;
+            const surahData = await fetchSurahWithAyahs(appState.currentSurah);
+            renderAyahList(surahData);
+        }
+
+        function updateCurrentSurahStatus(newStatus) {
+            if (!appState.currentSurah) return;
+            appState.progress[appState.currentSurah] = newStatus;
+            updateSiswaHeaderStats();
+            persistCurrentSiswaState();
+            showToast('Status hafalan surat diperbarui');
+        }
+
+        function saveCurrentSurahNote(noteText) {
+            if (!appState.currentSurah) return;
+            appState.notes[appState.currentSurah] = noteText.trim();
+            persistCurrentSiswaState();
+            showToast('Catatan pribadi tersimpan');
+        }
+
+        // ========================================================================
+        // 6. WORKSPACE PJ SISWA: MONITORING & SETORAN TEMAN SEKELAS
+        // ========================================================================
+        function loadPjWorkspace() {
+            document.getElementById('pj-workspace').classList.remove('hidden');
+            document.getElementById('header-pj-kelas-badge').textContent = `Kelas ${currentSession.kelas}`;
+            document.getElementById('header-pj-name').textContent = `PJ Setoran: ${currentSession.name}`;
+            renderPjStudentTable();
+        }
+
+        async function refreshPjData() {
+            await syncFromGoogleSpreadsheet(false);
+            renderPjStudentTable();
+        }
+
+        function setPjFilter(filter) {
+            appState.pjFilter = filter;
+            ['ALL', 'SUDAH', 'BELUM'].forEach(f => {
+                const btn = document.getElementById(`pj-filter-${f}`);
+                if (f === filter) {
+                    btn.className = 'px-3 py-2 rounded-xl text-xs font-bold bg-teal-700 text-white transition';
+                } else {
+                    btn.className = 'px-3 py-2 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition';
+                }
+            });
+            renderPjStudentTable();
+        }
+
+        function renderPjStudentTable() {
+            const tbody = document.getElementById('pj-student-tbody');
+            const query = (document.getElementById('pj-search-siswa').value || '').toLowerCase();
+            const targetKelas = String(currentSession.kelas || '').toUpperCase();
+
+            const classStudents = Object.values(allStudentsCache).filter(
+                s => String(s.kelas || '').toUpperCase() === targetKelas
+            );
+
+            const sudahCount = classStudents.filter(s => hasStudentSetoran(s)).length;
+            const belumCount = classStudents.length - sudahCount;
+
+            document.getElementById('pj-stat-total').textContent = classStudents.length;
+            document.getElementById('pj-stat-sudah').textContent = sudahCount;
+            document.getElementById('pj-stat-belum').textContent = belumCount;
+
+            const filtered = classStudents.filter(s => {
+                const isSudah = hasStudentSetoran(s);
+                const matchStatus =
+                    appState.pjFilter === 'ALL' ||
+                    (appState.pjFilter === 'SUDAH' && isSudah) ||
+                    (appState.pjFilter === 'BELUM' && !isSudah);
+                const matchName = s.name.toLowerCase().includes(query);
+                return matchStatus && matchName;
+            });
+
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-10 text-center text-xs text-slate-400">
+                            Belum ada siswa yang sesuai filter di Kelas ${targetKelas}.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(student => {
+                const isSudah = hasStudentSetoran(student);
+                const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition';
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${student.name}</td>
+                    <td class="py-3.5 px-4">
+                        ${isSudah
+                            ? '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">Sudah Setoran</span>'
+                            : '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400">Belum Setoran</span>'
+                        }
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-teal-600 rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/37 (${percent}%)</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-slate-500">${student.lastUpdated || '-'}</td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button type="button" onclick="openGuruEvalModal('${student.studentId}')" class="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-sm transition inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-microphone-lines"></i>
+                            <span>Pilih Setoran</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openPjAddStudentModal() {
+            document.getElementById('pj-modal-kelas-label').textContent = currentSession.kelas;
+            document.getElementById('pj-new-student-name').value = '';
+            document.getElementById('pj-add-student-modal').classList.remove('hidden');
+        }
+
+        function closePjAddStudentModal() {
+            document.getElementById('pj-add-student-modal').classList.add('hidden');
+        }
+
+        function handlePjAddStudent(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('pj-new-student-name').value.trim();
+            const kelas = String(currentSession.kelas || '').toUpperCase();
+            if (!nameInput || !kelas) return;
+
+            const studentId = generateStudentId(nameInput, kelas);
+            if (allStudentsCache[studentId]) {
+                showToast('Nama siswa sudah terdaftar di kelas ini', 'info');
+                closePjAddStudentModal();
+                return;
+            }
+
+            const newStudent = {
+                studentId: studentId,
+                name: nameInput,
+                kelas: kelas,
+                progress: {},
+                ayahHafal: {},
+                notes: {},
+                dailyTarget: '',
+                teacherFeedback: '',
+                teacherFeedbackDate: '',
+                lastUpdated: '-'
+            };
+
+            allStudentsCache[studentId] = newStudent;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(newStudent);
+
+            closePjAddStudentModal();
+            renderPjStudentTable();
+            showToast(`${nameInput} berhasil ditambahkan ke Kelas ${kelas}`);
+        }
+
+        // ========================================================================
+        // 7. WORKSPACE GURU: DASHBOARD MONITORING & NILAI TASMI'
+        // ========================================================================
+        function loadGuruWorkspace() {
+            document.getElementById('guru-workspace').classList.remove('hidden');
+            document.getElementById('header-guru-name').textContent = `Selamat datang, ${currentSession.name}`;
+            renderGuruStudentTable();
+        }
+
+        async function refreshGuruData() {
+            await syncFromGoogleSpreadsheet(false);
+            renderGuruStudentTable();
+        }
+
+        function renderGuruStudentTable() {
+            const tbody = document.getElementById('guru-student-tbody');
+            const searchQuery = (document.getElementById('guru-search-siswa').value || '').toLowerCase();
+            const kelasSelect = document.getElementById('guru-filter-kelas');
+            const selectedKelas = kelasSelect.value;
+            const selectedSetoran = document.getElementById('guru-filter-setoran').value;
+
+            const students = Object.values(allStudentsCache);
+
+            // Perbarui opsi filter kelas secara dinamis
+            const uniqueClasses = [...new Set(students.map(s => String(s.kelas || '').toUpperCase()).filter(Boolean))].sort();
+            kelasSelect.innerHTML = '<option value="ALL">Semua Kelas</option>';
+            uniqueClasses.forEach(kls => {
+                const opt = document.createElement('option');
+                opt.value = kls;
+                opt.textContent = `Kelas ${kls}`;
+                if (kls === selectedKelas) opt.selected = true;
+                kelasSelect.appendChild(opt);
+            });
+
+            // Hitung ringkasan statistik global
+            const totalSiswa = students.length;
+            const sudahSetoran = students.filter(s => hasStudentSetoran(s)).length;
+            const belumSetoran = totalSiswa - sudahSetoran;
+            const avgPercent = totalSiswa > 0
+                ? Math.round(students.reduce((acc, s) => {
+                    const h = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                    return acc + (h / 37) * 100;
+                }, 0) / totalSiswa)
+                : 0;
+
+            document.getElementById('guru-stat-total-siswa').textContent = totalSiswa;
+            document.getElementById('guru-stat-sudah-setoran').textContent = sudahSetoran;
+            document.getElementById('guru-stat-belum-setoran').textContent = belumSetoran;
+            document.getElementById('guru-stat-avg-progress').textContent = `${avgPercent}%`;
+
+            const filtered = students.filter(s => {
+                const isSudah = hasStudentSetoran(s);
+                const matchName = s.name.toLowerCase().includes(searchQuery);
+                const matchKelas = selectedKelas === 'ALL' || String(s.kelas || '').toUpperCase() === selectedKelas;
+                const matchSetoran =
+                    selectedSetoran === 'ALL' ||
+                    (selectedSetoran === 'SUDAH' && isSudah) ||
+                    (selectedSetoran === 'BELUM' && !isSudah);
+                return matchName && matchKelas && matchSetoran;
+            });
+
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-10 text-center text-xs text-slate-400">
+                            Tidak ada data siswa yang cocok dengan filter saat ini.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach(student => {
+                const isSudah = hasStudentSetoran(student);
+                const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition';
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${student.name}</td>
+                    <td class="py-3.5 px-4">
+                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-sand-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                            ${student.kelas}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        ${isSudah
+                            ? '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">Sudah Setoran</span>'
+                            : '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400">Belum Setoran</span>'
+                        }
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald-600 rounded-full" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/37 (${percent}%)</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs text-slate-500">${student.lastUpdated || '-'}</td>
+                    <td class="py-3.5 px-4 text-right">
+                        <button type="button" onclick="openGuruEvalModal('${student.studentId}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-sm transition inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <span>Nilai Tasmi'</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addDummyStudents() {
+            const dummies = [
+                { name: 'Muhammad Rizky', kelas: '8B', progress: { 114: 'hafal', 113: 'hafal', 112: 'hafal', 111: 'hafal', 110: 'hafal' } },
+                { name: 'Zahra Khairunnisa', kelas: '8B', progress: { 114: 'hafal', 113: 'proses' } },
+                { name: 'Fatimah Az-Zahra', kelas: '9C', progress: {} }
+            ];
+
+            dummies.forEach(d => {
+                const id = generateStudentId(d.name, d.kelas);
+                if (!allStudentsCache[id]) {
+                    allStudentsCache[id] = {
+                        studentId: id,
+                        name: d.name,
+                        kelas: d.kelas,
+                        progress: d.progress,
+                        ayahHafal: {},
+                        notes: {},
+                        dailyTarget: '',
+                        teacherFeedback: '',
+                        teacherFeedbackDate: '',
+                        lastUpdated: Object.keys(d.progress).length > 0 ? formatNowIndonesian() : '-'
+                    };
+                    syncStudentToGoogleSpreadsheet(allStudentsCache[id]);
+                }
+            });
+
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            renderGuruStudentTable();
+            showToast('Data siswa simulasi berhasil ditambahkan');
+        }
+
+        function exportStudentsCSV() {
+            const students = Object.values(allStudentsCache);
+            if (students.length === 0) {
+                showToast('Tidak ada data siswa untuk diekspor', 'info');
+                return;
+            }
+
+            const headers = ['Nama Siswa', 'Kelas', 'Status Setoran', 'Surat Hafal', 'Persentase (%)', 'Catatan Guru', 'Aktivitas Terakhir'];
+            const rows = students.map(s => {
+                const isSudah = hasStudentSetoran(s) ? 'Sudah Setoran' : 'Belum Setoran';
+                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
+                const percent = Math.round((hafalCount / 37) * 100);
+                return [
+                    `"${s.name}"`,
+                    `"${s.kelas}"`,
+                    `"${isSudah}"`,
+                    hafalCount,
+                    percent,
+                    `"${(s.teacherFeedback || '-').replace(/"/g, '""')}"`,
+                    `"${s.lastUpdated || '-'}"`
+                ].join(',');
+            });
+
+            const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `Laporan_Tahfidz_Juz30_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('File CSV laporan berhasil diunduh');
+        }
+
+        // ========================================================================
+        // 8. MODAL PENILAIAN SETORAN (TASMI') GURU & PJ SISWA + TAMPILAN AYAT
+        // ========================================================================
         function hasStudentSetoran(student) {
             if (!student) return false;
             const hasSurah = student.progress && Object.keys(student.progress).length > 0;
@@ -922,9 +1961,14 @@
             return Boolean(hasSurah || hasAyah);
         }
 
-        /**
-         * Membuka modal setoran / tasmi' untuk siswa tertentu (dipakai oleh PJ Siswa dan Guru)
-         */
+        function updateEvalModalSummary() {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
+            const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
+            const percent = Math.round((hafalCount / 37) * 100);
+            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
+        }
+
         function openGuruEvalModal(studentId) {
             const student = allStudentsCache[studentId];
             if (!student) return;
@@ -933,61 +1977,68 @@
             appState.evaluatingSurahNumber = null;
 
             const isPj = currentSession && currentSession.role === 'pj';
-            const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
 
             document.getElementById('eval-modal-siswa-name').textContent = student.name;
             document.getElementById('eval-modal-siswa-kelas').textContent = `Kelas ${student.kelas}`;
-            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
+            updateEvalModalSummary();
 
-            // Tampilkan kotak catatan evaluasi hanya jika yang login adalah Guru
             const feedbackSection = document.getElementById('eval-teacher-feedback-section');
             if (isPj) {
                 feedbackSection.classList.add('hidden');
-                document.getElementById('eval-surah-hint').textContent = 'Klik kartu surat untuk menampilkan seluruh ayat dan menyimak setoran';
+                document.getElementById('eval-surah-hint').textContent = 'Klik nama surat untuk menampilkan seluruh ayat dan menyimak setoran';
             } else {
                 feedbackSection.classList.remove('hidden');
                 document.getElementById('eval-teacher-feedback-input').value = student.teacherFeedback || '';
-                document.getElementById('eval-surah-hint').textContent = 'Klik kartu surat untuk mengubah status tasmi\' (Belum / Proses / Hafal)';
+                document.getElementById('eval-surah-hint').textContent = 'Klik nama surat untuk menampilkan seluruh ayat dan menilai tasmi\'';
             }
 
             // Pastikan tampilan awal modal berada di daftar 37 surat
-            document.getElementById('eval-ayah-view').classList.add('hidden');
             document.getElementById('eval-surah-list-view').classList.remove('hidden');
+            document.getElementById('eval-ayah-view').classList.add('hidden');
 
             renderEvalSurahList();
             document.getElementById('guru-eval-modal').classList.remove('hidden');
         }
 
-        /**
-         * Menutup modal setoran / tasmi' dan menyegarkan tabel dashboard
-         */
         function closeGuruEvalModal() {
-            stopAllAudio();
+            stopAudioPlayback();
+            document.getElementById('guru-eval-modal').classList.add('hidden');
             appState.evaluatingStudentId = null;
             appState.evaluatingSurahNumber = null;
-            document.getElementById('guru-eval-modal').classList.add('hidden');
 
             if (currentSession && currentSession.role === 'pj') {
-                renderPjDashboard();
+                renderPjStudentTable();
             } else if (currentSession && currentSession.role === 'guru') {
-                renderGuruDashboard();
+                renderGuruStudentTable();
             }
         }
 
-        /**
-         * Merender grid 37 surat di dalam modal penilaian PJ Siswa maupun Guru
-         */
+        function saveTeacherFeedbackForStudent() {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
+
+            const noteText = document.getElementById('eval-teacher-feedback-input').value.trim();
+            student.teacherFeedback = noteText;
+            student.teacherFeedbackDate = formatNowIndonesian();
+            student.lastUpdated = formatNowIndonesian();
+
+            allStudentsCache[student.studentId] = student;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(student);
+            showToast('Catatan evaluasi guru berhasil disimpan');
+        }
+
         function renderEvalSurahList() {
             const container = document.getElementById('eval-surah-list');
             const student = allStudentsCache[appState.evaluatingStudentId];
             if (!container || !student) return;
 
-            const isPj = currentSession && currentSession.role === 'pj';
             container.innerHTML = '';
 
             JUZ_30_SURAHS.forEach(surah => {
                 const status = (student.progress && student.progress[surah.number]) || 'belum';
+                const passedCount = (student.ayahHafal && student.ayahHafal[surah.number] && student.ayahHafal[surah.number].length) || 0;
+
                 let badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-500';
                 let badgeLabel = 'Belum';
                 let borderClass = 'border-sand-200 dark:border-slate-800';
@@ -1004,19 +2055,16 @@
 
                 const card = document.createElement('button');
                 card.type = 'button';
-                card.className = `p-3 rounded-2xl border ${borderClass} bg-white dark:bg-slate-900 hover:border-teal-500 transition flex items-center justify-between gap-2 text-left`;
-                card.onclick = () => {
-                    if (isPj) {
-                        openEvalSurahAyahView(surah.number);
-                    } else {
-                        cycleStudentSurahStatusByGuru(surah.number);
-                    }
-                };
+                card.className = `group p-3 rounded-2xl border ${borderClass} bg-white dark:bg-slate-900 hover:border-emerald-500 hover:shadow-sm transition flex items-center justify-between gap-2 text-left`;
+                card.onclick = () => openEvalSurahAyahView(surah.number);
 
                 card.innerHTML = `
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">${surah.number}. ${surah.name}</p>
-                        <p class="text-[11px] text-slate-400">${surah.ayahs} Ayat</p>
+                        <p class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 truncate flex items-center gap-1.5">
+                            <span>${surah.number}. ${surah.name}</span>
+                            <i class="fa-solid fa-book-open text-[10px] opacity-60 group-hover:opacity-100"></i>
+                        </p>
+                        <p class="text-[11px] text-slate-400">${passedCount}/${surah.ayahs} Ayat Lulus</p>
                     </div>
                     <span class="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 ${badgeClass}">${badgeLabel}</span>
                 `;
@@ -1024,1218 +2072,193 @@
             });
         }
 
-        /**
-         * Menandai kelulusan per ayat saat PJ Siswa menyimak setoran teman sekelas
-         */
-        async function toggleStudentAyahHafalByPj(surahNumber, numberInSurah) {
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!student) return;
-
-            if (!student.ayahHafal) student.ayahHafal = {};
-            if (!student.progress) student.progress = {};
-
-            const key = `${surahNumber}:${numberInSurah}`;
-            if (student.ayahHafal[key]) {
-                delete student.ayahHafal[key];
-            } else {
-                student.ayahHafal[key] = true;
-                if (!student.progress[surahNumber]) {
-                    student.progress[surahNumber] = 'proses';
-                    document.getElementById('eval-ayah-status-select').value = 'proses';
-                }
-            }
-
-            student.lastUpdated = new Date().toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
-
-            renderEvalAyahList();
-            await syncStudentToSheet(student);
-        }
-
-        /**
-         * Membuka tampilan seluruh ayat Al-Qur'an saat PJ Siswa mengklik kartu surat
-         */
+        // Menampilkan seluruh ayat dari surat yang diklik pada modal Nilai Tasmi' Guru / Setoran PJ
         async function openEvalSurahAyahView(surahNumber) {
-            const surah = JUZ_30_SURAHS.find(s => s.number === surahNumber);
             const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!surah || !student) return;
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!student || !meta) return;
 
             appState.evaluatingSurahNumber = surahNumber;
+
             document.getElementById('eval-surah-list-view').classList.add('hidden');
             document.getElementById('eval-ayah-view').classList.remove('hidden');
 
-            document.getElementById('eval-ayah-surah-title').textContent = `QS. ${surah.name} (${surah.arabic})`;
-            document.getElementById('eval-ayah-surah-meta').textContent = `${surah.meaning} • ${surah.ayahs} Ayat • ${surah.type}`;
+            document.getElementById('eval-ayah-surah-title').textContent = `QS. ${meta.name} (${meta.arabic})`;
+            document.getElementById('eval-ayah-surah-meta').textContent = `${meta.meaning} • ${meta.ayahs} Ayat • ${meta.type}`;
             document.getElementById('eval-ayah-status-select').value = (student.progress && student.progress[surahNumber]) || 'belum';
 
-            const container = document.getElementById('eval-ayah-container');
-            container.innerHTML = `<div class="text-center py-8 text-xs text-slate-500"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Memuat seluruh ayat QS. ${surah.name}...</div>`;
+            const ayahContainer = document.getElementById('eval-ayah-container');
+            ayahContainer.innerHTML = `
+                <div class="p-8 text-center bg-sand-50 dark:bg-slate-800/50 rounded-2xl border border-sand-200 dark:border-slate-700">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-700 mb-2"></i>
+                    <p class="text-xs text-slate-500">Memuat seluruh ayat QS. ${meta.name}...</p>
+                </div>
+            `;
 
-            try {
-                if (!appState.cacheSurahs[surahNumber]) {
-                    try {
-                        const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,id.indonesian,en.transliteration`);
-                        if (!res.ok) throw new Error('API utama gagal');
-                        const json = await res.json();
-                        appState.cacheSurahs[surahNumber] = json.data;
-                    } catch (primaryErr) {
-                        const fallbackRes = await fetch(`https://equran.id/api/v2/surat/${surahNumber}`);
-                        const fallbackJson = await fallbackRes.json();
-                        const ayatList = fallbackJson.data.ayat;
-                        appState.cacheSurahs[surahNumber] = [
-                            { ayahs: ayatList.map(a => ({ number: 0, numberInSurah: a.nomorAyat, text: a.teksArab, audioUrl: a.audio && a.audio['05'] })) },
-                            { ayahs: ayatList.map(a => ({ text: a.teksIndonesia })) },
-                            { ayahs: ayatList.map(a => ({ text: a.teksLatin })) }
-                        ];
-                    }
-                }
-                renderEvalAyahList();
-            } catch (err) {
-                container.innerHTML = `<div class="text-center py-8 text-xs text-red-500">Gagal memuat ayat. Periksa koneksi internet Anda lalu coba klik kembali.</div>`;
-            }
+            const surahData = await fetchSurahWithAyahs(surahNumber);
+            renderEvalSurahAyahs(surahData);
         }
 
-        /**
-         * Merender seluruh daftar ayat pada tampilan simak setoran PJ Siswa
-         */
-        function renderEvalAyahList() {
-            const surahNumber = appState.evaluatingSurahNumber;
+        function renderEvalSurahAyahs(surahData) {
+            const ayahContainer = document.getElementById('eval-ayah-container');
             const student = allStudentsCache[appState.evaluatingStudentId];
-            const editionsData = appState.cacheSurahs[surahNumber];
-            if (!surahNumber || !student || !editionsData) return;
+            if (!ayahContainer || !student || !surahData) return;
 
-            const container = document.getElementById('eval-ayah-container');
-            container.innerHTML = '';
+            const surahNumber = surahData.meta.number;
+            const passedAyahs = (student.ayahHafal && student.ayahHafal[surahNumber]) || [];
+            ayahContainer.innerHTML = '';
 
-            const arabAyahs = editionsData[0].ayahs;
-            const idAyahs = editionsData[1].ayahs;
-            const latinAyahs = editionsData[2].ayahs;
-            const ayahHafalMap = student.ayahHafal || {};
-
-            arabAyahs.forEach((ayah, idx) => {
-                const key = `${surahNumber}:${ayah.numberInSurah}`;
-                const isHafal = !!ayahHafalMap[key];
-                const customAudio = ayah.audioUrl ? `'${ayah.audioUrl}'` : 'null';
+            surahData.ayahs.forEach(ayah => {
+                const isPassed = passedAyahs.includes(ayah.numberInSurah);
 
                 const card = document.createElement('div');
-                card.id = `eval-ayah-card-${idx}`;
-                card.className = `p-4 rounded-2xl border transition ${isHafal ? 'bg-teal-50/70 dark:bg-teal-950/30 border-teal-300 dark:border-teal-800' : 'bg-white dark:bg-slate-900 border-sand-200 dark:border-slate-800'}`;
+                card.className = `p-4 rounded-2xl border ${isPassed ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20' : 'border-sand-200 dark:border-slate-800 bg-white dark:bg-slate-900'} space-y-2.5 transition`;
+
                 card.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                        <span class="px-2.5 py-1 rounded-lg bg-teal-800 text-white text-xs font-bold">Ayat ${ayah.numberInSurah} dari ${arabAyahs.length}</span>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-emerald-800 text-white text-xs font-bold flex items-center justify-center">
+                            ${ayah.numberInSurah}
+                        </span>
                         <div class="flex items-center gap-2">
-                            <button type="button" onclick="playSingleAyah(${ayah.number}, ${idx}, ${customAudio})" class="px-3 py-1.5 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-teal-100 text-xs font-semibold transition">
-                                <i class="fa-solid fa-volume-high mr-1 text-teal-700"></i>Dengar
-                            </button>
-                            <button type="button" onclick="toggleStudentAyahHafalByPj(${surahNumber}, ${ayah.numberInSurah})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition ${isHafal ? 'bg-teal-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">
-                                <i class="fa-solid fa-check mr-1"></i>${isHafal ? 'Ayat Lulus' : 'Tandai Lulus'}
+                            ${ayah.audio ? `
+                                <button type="button" onclick="playSingleAyah('${ayah.audio}')" class="px-3 py-1.5 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-volume-high text-emerald-700"></i>
+                                    <span>Dengar</span>
+                                </button>
+                            ` : ''}
+                            <button type="button" onclick="toggleEvalAyahHafal(${surahNumber}, ${ayah.numberInSurah})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${isPassed ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100'}">
+                                <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-check'}"></i>
+                                <span>${isPassed ? 'Lulus ✓' : 'Tandai Lulus'}</span>
                             </button>
                         </div>
                     </div>
-                    <p class="arabic-text text-2xl sm:text-3xl text-right font-bold text-slate-900 dark:text-white mb-2">
-                        ${ayah.text}
+
+                    <p class="arabic-text text-2xl sm:text-3xl text-slate-900 dark:text-white pt-1">
+                        ${ayah.arabic}
                     </p>
-                    <p class="text-xs italic text-teal-700 dark:text-teal-400 mb-1">${latinAyahs[idx].text}</p>
-                    <p class="text-xs text-slate-600 dark:text-slate-300">${idAyahs[idx].text}</p>
+                    <p class="text-xs italic text-emerald-800 dark:text-emerald-400">${ayah.latin}</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${ayah.translation}</p>
                 `;
-                container.appendChild(card);
+                ayahContainer.appendChild(card);
             });
         }
 
-        /**
-         * Menandai seluruh ayat pada surat yang sedang dibuka sebagai Lulus & status surat menjadi Hafal
-         */
-        async function markAllSurahAyahsPassedByPj() {
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            const surahNumber = appState.evaluatingSurahNumber;
-            const editionsData = appState.cacheSurahs[surahNumber];
-            if (!student || !surahNumber || !editionsData) return;
-
-            if (!student.ayahHafal) student.ayahHafal = {};
-            if (!student.progress) student.progress = {};
-
-            const arabAyahs = editionsData[0].ayahs;
-            arabAyahs.forEach(ayah => {
-                student.ayahHafal[`${surahNumber}:${ayah.numberInSurah}`] = true;
-            });
-
-            student.progress[surahNumber] = 'hafal';
-            document.getElementById('eval-ayah-status-select').value = 'hafal';
-
-            student.lastUpdated = new Date().toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
-
-            const hafalCount = Object.values(student.progress).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
-            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
-
-            renderEvalAyahList();
-            showToast('Seluruh ayat surat ini ditandai Lulus & Hafal!', 'success');
-            await syncStudentToSheet(student);
-        }
-
-        /**
-         * Mengubah status keseluruhan surat dari dalam tampilan ayat PJ Siswa
-         */
-        async function updateStudentSurahStatusFromEvalAyah(newStatus) {
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            const surahNumber = appState.evaluatingSurahNumber;
-            if (!student || !surahNumber) return;
-            if (!student.progress) student.progress = {};
-
-            if (newStatus === 'belum') {
-                delete student.progress[surahNumber];
-            } else {
-                student.progress[surahNumber] = newStatus;
-            }
-
-            student.lastUpdated = new Date().toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
-
-            const hafalCount = Object.values(student.progress).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
-            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
-
-            showToast('Status setoran surat disimpan ke database!', 'success');
-            await syncStudentToSheet(student);
-        }
-
-        /**
-         * Kembali dari tampilan ayat ke daftar 37 surat di dalam modal PJ Siswa
-         */
         function closeEvalSurahAyahView() {
-            stopAllAudio();
+            stopAudioPlayback();
             appState.evaluatingSurahNumber = null;
             document.getElementById('eval-ayah-view').classList.add('hidden');
             document.getElementById('eval-surah-list-view').classList.remove('hidden');
             renderEvalSurahList();
         }
 
-        // ========================================================================
-        // 4. FUNGSI KOMUNIKASI DATABASE GOOGLE SPREADSHEET
-        // ========================================================================
-
-        async function fetchAllStudentsFromSheet() {
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
-                return allStudentsCache;
-            }
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const result = await response.json();
-                if (result.status === 'success' && result.students) {
-                    allStudentsCache = result.students;
-                    safeStorageSet(DB_USERS_KEY, allStudentsCache);
-                    if (Array.isArray(result.users)) {
-                        loginUsersCache = result.users;
-                        safeStorageSet(DB_LOGIN_USERS_KEY, loginUsersCache);
-                    }
-                    return allStudentsCache;
-                }
-            } catch (error) {
-                console.error('Gagal mengambil data dari database:', error);
-            }
-            return allStudentsCache;
-        }
-
-        async function syncStudentToSheet(studentData) {
-            allStudentsCache[studentData.studentId] = studentData;
-            safeStorageSet(DB_USERS_KEY, allStudentsCache);
-
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_URL')) {
-                return;
-            }
-
-            try {
-                await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ student: studentData })
-                });
-            } catch (error) {
-                console.error('Gagal menyinkronkan data ke database:', error);
-            }
-        }
-
-        async function saveCurrentStudentProgress() {
-            if (!currentSession || currentSession.role !== 'siswa') return;
-
-            const existingData = allStudentsCache[currentSession.studentId] || {};
-            const updatedStudent = {
-                studentId: currentSession.studentId,
-                name: currentSession.name,
-                kelas: currentSession.kelas,
-                progress: appState.progress,
-                ayahHafal: appState.ayahHafal,
-                notes: appState.notes,
-                dailyTarget: appState.dailyTarget,
-                teacherFeedback: existingData.teacherFeedback || '',
-                teacherFeedbackDate: existingData.teacherFeedbackDate || '',
-                lastUpdated: new Date().toLocaleString('id-ID', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                })
-            };
-
-            await syncStudentToSheet(updatedStudent);
-        }
-
-        // ========================================================================
-        // 5. FUNGSI AUTENTIKASI (LOGIN SISWA, PJ SISWA & GURU)
-        // ========================================================================
-
-        /**
-         * Memunculkan atau menyembunyikan tab login PJ Siswa & Guru saat tanda titik di pojok atas diklik
-         */
-        function toggleStaffLoginTabs() {
-            const tabsContainer = document.getElementById('login-role-tabs');
-            const dotIndicator = document.getElementById('secret-dot-indicator');
-            if (!tabsContainer) return;
-
-            appState.isStaffTabsVisible = !appState.isStaffTabsVisible;
-
-            if (appState.isStaffTabsVisible) {
-                tabsContainer.classList.remove('hidden');
-                if (dotIndicator) {
-                    dotIndicator.className = 'w-2 h-2 rounded-full bg-gold-400 shadow-sm transition-all';
-                }
-            } else {
-                tabsContainer.classList.add('hidden');
-                switchLoginRole('siswa');
-                if (dotIndicator) {
-                    dotIndicator.className = 'w-1.5 h-1.5 rounded-full bg-emerald-300/60 group-hover:bg-gold-400 transition-all';
-                }
-            }
-        }
-
-        function switchLoginRole(role) {
-            const roles = ['siswa', 'pj', 'guru'];
-            const activeColors = {
-                siswa: 'bg-emerald-700 text-white shadow-sm',
-                pj: 'bg-teal-700 text-white shadow-sm',
-                guru: 'bg-gold-500 text-white shadow-sm'
-            };
-
-            roles.forEach(r => {
-                const tab = document.getElementById(`tab-role-${r}`);
-                const form = document.getElementById(`form-login-${r}`);
-                if (r === role) {
-                    tab.className = `py-2.5 px-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 ${activeColors[r]}`;
-                    form.classList.remove('hidden');
-                } else {
-                    tab.className = "py-2.5 px-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-emerald-700 transition flex items-center justify-center gap-1.5";
-                    form.classList.add('hidden');
-                }
-            });
-        }
-
-        function generateStudentId(name, kelas) {
-            return `${name.trim().toLowerCase().replace(/\s+/g, '_')}__${kelas.trim().toLowerCase().replace(/\s+/g, '')}`;
-        }
-
-        function verifyUserFromSheet(role, name, password, kelas = '') {
-            if (!Array.isArray(loginUsersCache) || loginUsersCache.length === 0) {
-                return { matched: false, hasSheetUsers: false };
-            }
-            const roleUsers = loginUsersCache.filter(u => (u.role || '').toLowerCase() === role);
-            if (roleUsers.length === 0) {
-                return { matched: false, hasSheetUsers: false };
-            }
-
-            const found = roleUsers.find(u => {
-                const sameName = (u.name || '').trim().toLowerCase() === name.trim().toLowerCase();
-                const samePass = String(u.password || '').trim() === String(password || '').trim();
-                const sameKelas = !kelas || (u.kelas || '').trim().toUpperCase() === kelas.trim().toUpperCase();
-                return sameName && samePass && sameKelas;
-            });
-
-            return { matched: !!found, hasSheetUsers: true, user: found };
-        }
-
-        async function handleSiswaLogin(event) {
-            event.preventDefault();
-            const nameInput = document.getElementById('login-siswa-nama').value.trim();
-            const passOrKelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
-            if (!nameInput || !passOrKelasInput) return;
-
-            showToast('Menghubungkan ke database...', 'info');
-            await fetchAllStudentsFromSheet();
-
-            const authCheck = verifyUserFromSheet('siswa', nameInput, passOrKelasInput);
-            let finalName = nameInput;
-            let finalKelas = passOrKelasInput;
-
-            if (authCheck.hasSheetUsers && authCheck.matched && authCheck.user) {
-                finalName = authCheck.user.name;
-                finalKelas = (authCheck.user.kelas && authCheck.user.kelas !== '-') ? authCheck.user.kelas : passOrKelasInput;
-            } else {
-                const dbMatch = Object.values(allStudentsCache).find(
-                    s => (s.name || '').trim().toLowerCase() === nameInput.toLowerCase() &&
-                         (s.kelas || '').trim().toUpperCase() === passOrKelasInput
-                );
-                if (dbMatch) {
-                    finalName = dbMatch.name;
-                    finalKelas = dbMatch.kelas;
-                } else if (authCheck.hasSheetUsers) {
-                    showToast('Nama siswa atau password/kelas tidak cocok dengan database!', 'error');
-                    return;
-                }
-            }
-
-            const studentId = generateStudentId(finalName, finalKelas);
-            currentSession = { role: 'siswa', name: finalName, kelas: finalKelas, studentId: studentId };
-            safeStorageSet(SESSION_KEY, currentSession);
-
-            const savedStudent = allStudentsCache[studentId];
-            if (savedStudent) {
-                appState.progress = savedStudent.progress || {};
-                appState.ayahHafal = savedStudent.ayahHafal || {};
-                appState.notes = savedStudent.notes || {};
-                appState.dailyTarget = savedStudent.dailyTarget || '';
-            } else {
-                appState.progress = {};
-                appState.ayahHafal = {};
-                appState.notes = {};
-                appState.dailyTarget = '';
-                await saveCurrentStudentProgress();
-            }
-
-            showToast(`Ahlan wa Sahlan, ${finalName}!`, 'success');
-            initAppWorkspace();
-        }
-
-        async function handlePjLogin(event) {
-            event.preventDefault();
-            const pjName = document.getElementById('login-pj-nama').value.trim();
-            const kelasInput = document.getElementById('login-pj-kelas').value.trim().toUpperCase();
-            const pjPass = document.getElementById('login-pj-pass').value.trim();
-
-            if (!pjName || !kelasInput) return;
-
-            showToast(`Memverifikasi akun PJ Kelas ${kelasInput}...`, 'info');
-            await fetchAllStudentsFromSheet();
-
-            const authCheck = verifyUserFromSheet('pj', pjName, pjPass, kelasInput);
-            const validFallback = pjPass === PJ_PASSWORD;
-
-            if (!authCheck.matched && !validFallback) {
-                showToast(`Nama, kelas, atau password PJ tidak sesuai!`, 'error');
-                return;
-            }
-
-            currentSession = { role: 'pj', name: pjName, kelas: kelasInput };
-            safeStorageSet(SESSION_KEY, currentSession);
-
-            showToast(`Selamat bertugas, PJ ${pjName} (Kelas ${kelasInput})!`, 'success');
-            initAppWorkspace();
-        }
-
-        async function handleGuruLogin(event) {
-            event.preventDefault();
-            const guruName = document.getElementById('login-guru-nama').value.trim();
-            const guruPass = document.getElementById('login-guru-pass').value.trim();
-
-            showToast('Memverifikasi akun Guru dari Database...', 'info');
-            await fetchAllStudentsFromSheet();
-
-            const authCheck = verifyUserFromSheet('guru', guruName, guruPass);
-            const validFallback = guruPass === GURU_PASSWORD;
-
-            if (!authCheck.matched && !validFallback) {
-                showToast(`Nama atau password guru salah!`, 'error');
-                return;
-            }
-
-            currentSession = { role: 'guru', name: guruName };
-            safeStorageSet(SESSION_KEY, currentSession);
-
-            showToast(`Selamat datang, ${guruName}!`, 'success');
-            initAppWorkspace();
-        }
-
-        function quickDemoLogin(role) {
-            if (role === 'siswa') {
-                switchLoginRole('siswa');
-                document.getElementById('login-siswa-nama').value = 'Ahmad Fauzi';
-                document.getElementById('login-siswa-kelas').value = '7A';
-                document.getElementById('form-login-siswa').dispatchEvent(new Event('submit'));
-            } else if (role === 'pj') {
-                if (!appState.isStaffTabsVisible) toggleStaffLoginTabs();
-                switchLoginRole('pj');
-                document.getElementById('login-pj-nama').value = 'Budi Santoso';
-                document.getElementById('login-pj-kelas').value = '7A';
-                document.getElementById('login-pj-pass').value = PJ_PASSWORD;
-                document.getElementById('form-login-pj').dispatchEvent(new Event('submit'));
-            } else {
-                if (!appState.isStaffTabsVisible) toggleStaffLoginTabs();
-                switchLoginRole('guru');
-                document.getElementById('login-guru-nama').value = 'Ustadz Rahmat';
-                document.getElementById('login-guru-pass').value = GURU_PASSWORD;
-                document.getElementById('form-login-guru').dispatchEvent(new Event('submit'));
-            }
-        }
-
-        function logoutUser() {
-            stopAllAudio();
-            currentSession = null;
-            localStorage.removeItem(SESSION_KEY);
-            document.getElementById('siswa-workspace').classList.add('hidden');
-            document.getElementById('pj-workspace').classList.add('hidden');
-            document.getElementById('guru-workspace').classList.add('hidden');
-            document.getElementById('view-login').classList.remove('hidden');
-
-            // Sembunyikan kembali tab PJ & Guru saat keluar akun
-            appState.isStaffTabsVisible = false;
-            const tabsContainer = document.getElementById('login-role-tabs');
-            const dotIndicator = document.getElementById('secret-dot-indicator');
-            if (tabsContainer) tabsContainer.classList.add('hidden');
-            if (dotIndicator) dotIndicator.className = 'w-1.5 h-1.5 rounded-full bg-emerald-300/60 group-hover:bg-gold-400 transition-all';
-            switchLoginRole('siswa');
-
-            showToast('Anda telah keluar dari akun.', 'info');
-        }
-
-        function initAppWorkspace() {
-            applyDarkMode();
-            if (!currentSession) {
-                document.getElementById('view-login').classList.remove('hidden');
-                return;
-            }
-
-            document.getElementById('view-login').classList.add('hidden');
-            document.getElementById('siswa-workspace').classList.add('hidden');
-            document.getElementById('pj-workspace').classList.add('hidden');
-            document.getElementById('guru-workspace').classList.add('hidden');
-
-            if (currentSession.role === 'siswa') {
-                document.getElementById('siswa-workspace').classList.remove('hidden');
-                document.getElementById('header-siswa-badge').textContent = `${currentSession.name} • Kelas ${currentSession.kelas}`;
-                document.getElementById('daily-target-input').value = appState.dailyTarget || '';
-
-                const studentData = allStudentsCache[currentSession.studentId] || {};
-                const banner = document.getElementById('siswa-teacher-feedback-banner');
-                if (studentData.teacherFeedback) {
-                    banner.classList.remove('hidden');
-                    document.getElementById('siswa-teacher-feedback-text').textContent = studentData.teacherFeedback;
-                    document.getElementById('siswa-teacher-feedback-date').textContent = studentData.teacherFeedbackDate || '';
-                } else {
-                    banner.classList.add('hidden');
-                }
-
-                updateGlobalProgressUI();
-                switchView('list');
-            } else if (currentSession.role === 'pj') {
-                document.getElementById('pj-workspace').classList.remove('hidden');
-                document.getElementById('header-pj-kelas-badge').textContent = `Kelas ${currentSession.kelas}`;
-                document.getElementById('header-pj-name').textContent = `PJ Siswa: ${currentSession.name}`;
-                renderPjDashboard();
-            } else if (currentSession.role === 'guru') {
-                document.getElementById('guru-workspace').classList.remove('hidden');
-                document.getElementById('header-guru-name').textContent = `Selamat datang, ${currentSession.name}`;
-                renderGuruDashboard();
-            }
-        }
-
-        // ========================================================================
-        // 6. FUNGSI WORKSPACE PJ SISWA (PEMILIHAN & MONITORING SETORAN KELAS)
-        // ========================================================================
-
-        async function refreshPjData() {
-            showToast('Menyegarkan data kelas dari Spreadsheet...', 'info');
-            await fetchAllStudentsFromSheet();
-            renderPjDashboard();
-            showToast('Data kelas berhasil diperbarui!', 'success');
-        }
-
-        function setPjFilter(filter) {
-            appState.pjFilter = filter;
-            ['ALL', 'SUDAH', 'BELUM'].forEach(f => {
-                const btn = document.getElementById(`pj-filter-${f}`);
-                if (f === filter) {
-                    btn.className = "px-3 py-2 rounded-xl text-xs font-bold bg-teal-700 text-white transition";
-                } else {
-                    btn.className = "px-3 py-2 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition";
-                }
-            });
-            renderPjStudentTable();
-        }
-
-        function renderPjDashboard() {
-            if (!currentSession || currentSession.role !== 'pj') return;
-            const targetKelas = currentSession.kelas.toUpperCase();
-            const classStudents = Object.values(allStudentsCache).filter(
-                s => (s.kelas || '').toUpperCase() === targetKelas
-            );
-
-            const sudahCount = classStudents.filter(s => hasStudentSetoran(s)).length;
-            const belumCount = classStudents.length - sudahCount;
-
-            document.getElementById('pj-stat-total').textContent = classStudents.length;
-            document.getElementById('pj-stat-sudah').textContent = sudahCount;
-            document.getElementById('pj-stat-belum').textContent = belumCount;
-
-            renderPjStudentTable();
-        }
-
-        function renderPjStudentTable() {
-            if (!currentSession || currentSession.role !== 'pj') return;
-            const tbody = document.getElementById('pj-student-tbody');
-            const search = (document.getElementById('pj-search-siswa').value || '').toLowerCase();
-            const targetKelas = currentSession.kelas.toUpperCase();
-
-            const filtered = Object.values(allStudentsCache).filter(s => {
-                if ((s.kelas || '').toUpperCase() !== targetKelas) return false;
-                if (search && !(s.name || '').toLowerCase().includes(search)) return false;
-                const sudah = hasStudentSetoran(s);
-                if (appState.pjFilter === 'SUDAH' && !sudah) return false;
-                if (appState.pjFilter === 'BELUM' && sudah) return false;
-                return true;
-            });
-
-            tbody.innerHTML = '';
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400 text-xs">Tidak ada siswa yang sesuai di Kelas ${targetKelas}.</td></tr>`;
-                return;
-            }
-
-            filtered.forEach(s => {
-                const sudah = hasStudentSetoran(s);
-                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
-
-                const statusBadge = sudah
-                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i>Sudah Setoran</span>`
-                    : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400"><i class="fa-solid fa-clock"></i>Belum Setoran</span>`;
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${s.name}</td>
-                    <td class="py-3.5 px-4">${statusBadge}</td>
-                    <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-teal-600" style="width: ${percent}%"></div>
-                            </div>
-                            <span class="text-xs font-bold">${hafalCount}/37 (${percent}%)</span>
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs text-slate-500">${s.lastUpdated || '-'}</td>
-                    <td class="py-3.5 px-4 text-right">
-                        <button type="button" onclick="openGuruEvalModal('${s.studentId}')" class="px-3.5 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-sm transition inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-hand-pointer"></i>
-                            <span>Pilih Setoran</span>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function openPjAddStudentModal() {
-            if (!currentSession || currentSession.role !== 'pj') return;
-            document.getElementById('pj-new-student-name').value = '';
-            document.getElementById('pj-modal-kelas-label').textContent = currentSession.kelas;
-            document.getElementById('pj-add-student-modal').classList.remove('hidden');
-        }
-
-        function closePjAddStudentModal() {
-            document.getElementById('pj-add-student-modal').classList.add('hidden');
-        }
-
-        async function handlePjAddStudent(event) {
-            event.preventDefault();
-            if (!currentSession || currentSession.role !== 'pj') return;
-
-            const name = document.getElementById('pj-new-student-name').value.trim();
-            const kelas = currentSession.kelas.toUpperCase();
-            if (!name) return;
-
-            const studentId = generateStudentId(name, kelas);
-            if (allStudentsCache[studentId]) {
-                showToast('Siswa dengan nama tersebut sudah terdaftar di kelas ini.', 'warning');
-                return;
-            }
-
-            const newStudent = {
-                studentId: studentId,
-                name: name,
-                kelas: kelas,
-                progress: {},
-                ayahHafal: {},
-                notes: {},
-                dailyTarget: '',
-                teacherFeedback: '',
-                teacherFeedbackDate: '',
-                lastUpdated: new Date().toLocaleString('id-ID', {
-                    day: '2-digit', month: 'short', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                })
-            };
-
-            closePjAddStudentModal();
-            showToast(`Menambahkan ${name} ke Kelas ${kelas}...`, 'info');
-            await syncStudentToSheet(newStudent);
-            renderPjDashboard();
-            showToast(`${name} berhasil ditambahkan!`, 'success');
-        }
-
-        // ========================================================================
-        // 7. FUNGSI WORKSPACE SISWA (DAFTAR SURAT, AYAT & AUDIO MUROTTAL)
-        // ========================================================================
-
-        function switchView(view) {
-            stopAllAudio();
-            const listSec = document.getElementById('view-surah-list');
-            const detailSec = document.getElementById('view-surah-detail');
-            if (view === 'list') {
-                detailSec.classList.add('hidden');
-                listSec.classList.remove('hidden');
-                renderSurahGrid();
-            } else {
-                listSec.classList.add('hidden');
-                detailSec.classList.remove('hidden');
-            }
-        }
-
-        function setSurahFilter(filter) {
-            appState.currentFilter = filter;
-            ['all', 'hafal', 'proses', 'belum'].forEach(f => {
-                const btn = document.getElementById(`filter-btn-${f}`);
-                if (f === filter) {
-                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition";
-                }
-            });
-            renderSurahGrid();
-        }
-
-        function renderSurahGrid() {
-            const grid = document.getElementById('surah-grid');
-            const search = (document.getElementById('surah-search-input').value || '').toLowerCase();
-            grid.innerHTML = '';
-
-            JUZ_30_SURAHS.forEach(surah => {
-                const status = appState.progress[surah.number] || 'belum';
-                if (appState.currentFilter !== 'all' && status !== appState.currentFilter) return;
-                if (search && !surah.name.toLowerCase().includes(search) && !surah.meaning.toLowerCase().includes(search)) return;
-
-                let badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Belum</span>`;
-                if (status === 'hafal') {
-                    badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-check mr-1"></i>Hafal</span>`;
-                } else if (status === 'proses') {
-                    badgeHTML = `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"><i class="fa-solid fa-spinner mr-1"></i>Proses</span>`;
-                }
-
-                const card = document.createElement('div');
-                card.className = "bg-white dark:bg-slate-900 p-4 rounded-2xl border border-sand-200 dark:border-slate-800 hover:border-emerald-500 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between gap-3";
-                card.onclick = () => openSurahDetail(surah.number);
-                card.innerHTML = `
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-200/60 dark:border-emerald-800">
-                            ${surah.number}
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-sm text-slate-900 dark:text-white">${surah.name}</h3>
-                            <p class="text-[11px] text-slate-500 dark:text-slate-400">${surah.meaning} • ${surah.ayahs} Ayat</p>
-                            <div class="mt-1.5">${badgeHTML}</div>
-                        </div>
-                    </div>
-                    <div class="arabic-text text-2xl font-bold text-emerald-800 dark:text-emerald-300">${surah.arabic}</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        async function openSurahDetail(surahNumber) {
-            const surah = JUZ_30_SURAHS.find(s => s.number === surahNumber);
-            if (!surah) return;
-
-            appState.currentSurah = surah;
-            document.getElementById('detail-surah-title').textContent = `QS. ${surah.name}`;
-            document.getElementById('detail-surah-meta').textContent = `${surah.meaning} • ${surah.ayahs} Ayat • ${surah.type}`;
-            document.getElementById('detail-surah-arabic').textContent = surah.arabic;
-            document.getElementById('detail-surah-status').value = appState.progress[surah.number] || 'belum';
-            document.getElementById('detail-surah-note').value = appState.notes[surah.number] || '';
-
-            switchView('detail');
-
-            const container = document.getElementById('ayah-list-container');
-            container.innerHTML = `<div class="text-center py-10 text-sm text-slate-500"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>Memuat ayat-ayat QS. ${surah.name}...</div>`;
-
-            try {
-                if (!appState.cacheSurahs[surahNumber]) {
-                    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,id.indonesian,en.transliteration`);
-                    const json = await res.json();
-                    appState.cacheSurahs[surahNumber] = json.data;
-                }
-                renderAyahList(appState.cacheSurahs[surahNumber]);
-            } catch (err) {
-                container.innerHTML = `<div class="text-center py-8 text-sm text-red-500">Gagal memuat ayat. Periksa koneksi internet Anda.</div>`;
-            }
-        }
-
-        function renderAyahList(editionsData) {
-            const container = document.getElementById('ayah-list-container');
-            container.innerHTML = '';
-
-            const arabAyahs = editionsData[0].ayahs;
-            const idAyahs = editionsData[1].ayahs;
-            const latinAyahs = editionsData[2].ayahs;
-            const surahNum = appState.currentSurah.number;
-
-            arabAyahs.forEach((ayah, idx) => {
-                const key = `${surahNum}:${ayah.numberInSurah}`;
-                const isHafal = !!appState.ayahHafal[key];
-
-                const box = document.createElement('div');
-                box.id = `ayah-card-${idx}`;
-                box.className = `p-5 rounded-2xl border transition ${isHafal ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800' : 'bg-white dark:bg-slate-900 border-sand-200 dark:border-slate-800'}`;
-                box.innerHTML = `
-                    <div class="flex items-center justify-between gap-2 mb-3">
-                        <span class="px-2.5 py-1 rounded-lg bg-emerald-800 text-white text-xs font-bold">Ayat ${ayah.numberInSurah}</span>
-                        <div class="flex items-center gap-2">
-                            <button onclick="playSingleAyah(${ayah.number}, ${idx})" class="px-3 py-1 rounded-lg bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold transition">
-                                <i class="fa-solid fa-volume-high mr-1 text-emerald-700"></i>Dengar
-                            </button>
-                            <button onclick="toggleAyahHafal('${key}')" class="px-3 py-1 rounded-lg text-xs font-bold transition ${isHafal ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">
-                                <i class="fa-solid fa-check mr-1"></i>${isHafal ? 'Sudah Hafal' : 'Tandai Hafal'}
-                            </button>
-                        </div>
-                    </div>
-                    <p class="arabic-text text-2xl sm:text-3xl text-right font-bold text-slate-900 dark:text-white mb-3 ${appState.hafalanMode ? 'blur-hafalan' : ''}">
-                        ${ayah.text}
-                    </p>
-                    ${appState.showLatin ? `<p class="text-xs italic text-emerald-700 dark:text-emerald-400 mb-1">${latinAyahs[idx].text}</p>` : ''}
-                    ${appState.showTrans ? `<p class="text-xs text-slate-600 dark:text-slate-300">${idAyahs[idx].text}</p>` : ''}
-                `;
-                container.appendChild(box);
-            });
-        }
-
-        function playSingleAyah(globalAyahNumber, idx, customAudioUrl = null) {
-            stopAllAudio();
-            highlightAyahCard(idx);
-            audioPlayer.src = customAudioUrl || `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${globalAyahNumber}.mp3`;
-            audioPlayer.play().catch(() => showToast('Gagal memutar audio ayat.', 'error'));
-        }
-
-        function togglePlayAllSurah() {
-            if (appState.isPlayingAll) {
-                stopAllAudio();
-                return;
-            }
-            if (!appState.currentSurah || !appState.cacheSurahs[appState.currentSurah.number]) return;
-
-            appState.isPlayingAll = true;
-            appState.playAllIndex = 0;
-            updatePlayAllButtonUI(true);
-            playNextInQueue();
-        }
-
-        function playNextInQueue() {
-            if (!appState.isPlayingAll || !appState.currentSurah) return;
-            const arabAyahs = appState.cacheSurahs[appState.currentSurah.number][0].ayahs;
-            if (appState.playAllIndex >= arabAyahs.length) {
-                stopAllAudio();
-                return;
-            }
-
-            const ayah = arabAyahs[appState.playAllIndex];
-            highlightAyahCard(appState.playAllIndex);
-            audioPlayer.src = ayah.audioUrl || `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${ayah.number}.mp3`;
-            audioPlayer.play().catch(() => stopAllAudio());
-        }
-
-        function stopAllAudio() {
-            audioPlayer.pause();
-            appState.isPlayingAll = false;
-            updatePlayAllButtonUI(false);
-            document.querySelectorAll('[id^="ayah-card-"], [id^="eval-ayah-card-"]').forEach(el => {
-                el.classList.remove('ring-2', 'ring-emerald-500');
-            });
-        }
-
-        function highlightAyahCard(idx) {
-            document.querySelectorAll('[id^="ayah-card-"], [id^="eval-ayah-card-"]').forEach(el => {
-                el.classList.remove('ring-2', 'ring-emerald-500');
-            });
-            const target = document.getElementById(`ayah-card-${idx}`) || document.getElementById(`eval-ayah-card-${idx}`);
-            if (target) {
-                target.classList.add('ring-2', 'ring-emerald-500');
-                target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-
-        audioPlayer.addEventListener('ended', () => {
-            if (appState.isPlayingAll) {
-                appState.playAllIndex++;
-                playNextInQueue();
-            }
-        });
-
-        function updatePlayAllButtonUI(playing) {
-            const icon = document.getElementById('icon-play-all');
-            const text = document.getElementById('text-play-all');
-            if (!icon || !text) return;
-            if (playing) {
-                icon.className = 'fa-solid fa-stop';
-                text.textContent = 'Hentikan Audio';
-            } else {
-                icon.className = 'fa-solid fa-play';
-                text.textContent = 'Putar Semua Ayat';
-            }
-        }
-
-        async function toggleAyahHafal(key) {
-            appState.ayahHafal[key] = !appState.ayahHafal[key];
-            if (!appState.ayahHafal[key]) delete appState.ayahHafal[key];
-            renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
-            await saveCurrentStudentProgress();
-        }
-
-        async function updateCurrentSurahStatus(newStatus) {
-            if (!appState.currentSurah) return;
-            if (newStatus === 'belum') {
-                delete appState.progress[appState.currentSurah.number];
-            } else {
-                appState.progress[appState.currentSurah.number] = newStatus;
-            }
-            updateGlobalProgressUI();
-            showToast('Status hafalan diperbarui & disinkronkan!', 'success');
-            await saveCurrentStudentProgress();
-        }
-
-        async function saveCurrentSurahNote(noteText) {
-            if (!appState.currentSurah) return;
-            appState.notes[appState.currentSurah.number] = noteText.trim();
-            showToast('Catatan tersimpan.', 'info');
-            await saveCurrentStudentProgress();
-        }
-
-        async function saveDailyTarget(targetText) {
-            appState.dailyTarget = targetText.trim();
-            showToast('Target harian disimpan!', 'success');
-            await saveCurrentStudentProgress();
-        }
-
-        function toggleHafalanMode() {
-            appState.hafalanMode = !appState.hafalanMode;
-            const btn = document.getElementById('btn-toggle-hafalan');
-            btn.classList.toggle('bg-amber-200', appState.hafalanMode);
-            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
-                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
-            }
-        }
-
-        function toggleLatinDisplay() {
-            appState.showLatin = !appState.showLatin;
-            document.getElementById('btn-toggle-latin').textContent = `Latin: ${appState.showLatin ? 'ON' : 'OFF'}`;
-            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
-                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
-            }
-        }
-
-        function toggleTransDisplay() {
-            appState.showTrans = !appState.showTrans;
-            document.getElementById('btn-toggle-trans').textContent = `Terjemah: ${appState.showTrans ? 'ON' : 'OFF'}`;
-            if (appState.currentSurah && appState.cacheSurahs[appState.currentSurah.number]) {
-                renderAyahList(appState.cacheSurahs[appState.currentSurah.number]);
-            }
-        }
-
-        function updateGlobalProgressUI() {
-            const hafalCount = Object.values(appState.progress).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
-            document.getElementById('stat-hafal-count').textContent = hafalCount;
-            document.getElementById('stat-percentage').textContent = `${percent}%`;
-            document.getElementById('global-progress-bar').style.width = `${percent}%`;
-        }
-
-        // ========================================================================
-        // 8. FUNGSI DASHBOARD GURU & PENILAIAN TASMI'
-        // ========================================================================
-
-        async function refreshGuruData() {
-            showToast('Menyegarkan data dari Database...', 'info');
-            await fetchAllStudentsFromSheet();
-            renderGuruDashboard();
-            showToast('Data terbaru berhasil dimuat!', 'success');
-        }
-
-        function renderGuruDashboard() {
-            const students = Object.values(allStudentsCache);
-            const totalSiswa = students.length;
-            let sudahSetoranCount = 0;
-            let sumPercent = 0;
-
-            const kelasSet = new Set();
-            students.forEach(s => {
-                if (s.kelas) kelasSet.add(s.kelas.toUpperCase());
-                if (hasStudentSetoran(s)) sudahSetoranCount++;
-                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                sumPercent += Math.round((hafalCount / 37) * 100);
-            });
-
-            const belumSetoranCount = totalSiswa - sudahSetoranCount;
-            const avgPercent = totalSiswa > 0 ? Math.round(sumPercent / totalSiswa) : 0;
-
-            document.getElementById('guru-stat-total-siswa').textContent = totalSiswa;
-            document.getElementById('guru-stat-sudah-setoran').textContent = sudahSetoranCount;
-            document.getElementById('guru-stat-belum-setoran').textContent = belumSetoranCount;
-            document.getElementById('guru-stat-avg-progress').textContent = `${avgPercent}%`;
-
-            const filterSelect = document.getElementById('guru-filter-kelas');
-            const currentVal = filterSelect.value;
-            filterSelect.innerHTML = `<option value="ALL">Semua Kelas (${kelasSet.size})</option>`;
-            Array.from(kelasSet).sort().forEach(kls => {
-                filterSelect.innerHTML += `<option value="${kls}">Kelas ${kls}</option>`;
-            });
-            filterSelect.value = Array.from(kelasSet).includes(currentVal) ? currentVal : 'ALL';
-
-            renderGuruStudentTable();
-        }
-
-        function renderGuruStudentTable() {
-            const tbody = document.getElementById('guru-student-tbody');
-            const search = (document.getElementById('guru-search-siswa').value || '').toLowerCase();
-            const filterKelas = document.getElementById('guru-filter-kelas').value;
-            const filterSetoran = document.getElementById('guru-filter-setoran').value;
-            const students = Object.values(allStudentsCache);
-
-            tbody.innerHTML = '';
-            const filtered = students.filter(s => {
-                const matchName = (s.name || '').toLowerCase().includes(search);
-                const matchKelas = filterKelas === 'ALL' || (s.kelas || '').toUpperCase() === filterKelas;
-                const sudah = hasStudentSetoran(s);
-                const matchSetoran = filterSetoran === 'ALL' || (filterSetoran === 'SUDAH' && sudah) || (filterSetoran === 'BELUM' && !sudah);
-                return matchName && matchKelas && matchSetoran;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 text-xs">Belum ada data siswa yang sesuai.</td></tr>`;
-                return;
-            }
-
-            filtered.forEach(s => {
-                const sudah = hasStudentSetoran(s);
-                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
-
-                const setoranBadge = sudah
-                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400"><i class="fa-solid fa-circle-check"></i>Sudah Setoran</span>`
-                    : `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-400"><i class="fa-solid fa-clock"></i>Belum Setoran</span>`;
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-4 font-bold text-slate-900 dark:text-white">${s.name}</td>
-                    <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">${s.kelas}</span></td>
-                    <td class="py-3.5 px-4">${setoranBadge}</td>
-                    <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-2">
-                            <div class="w-24 h-2 bg-sand-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-emerald-600" style="width: ${percent}%"></div>
-                            </div>
-                            <span class="text-xs font-bold">${hafalCount}/37 (${percent}%)</span>
-                        </div>
-                    </td>
-                    <td class="py-3.5 px-4 text-xs text-slate-500">${s.lastUpdated || '-'}</td>
-                    <td class="py-3.5 px-4 text-right">
-                        <button onclick="openGuruEvalModal('${s.studentId}')" class="px-3 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition">
-                            Nilai Tasmi'
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function cycleStudentSurahStatusByGuru(surahNumber) {
+        function toggleEvalAyahHafal(surahNumber, ayahNumber) {
             const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!student) return;
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!student || !meta) return;
+
+            if (!student.ayahHafal) student.ayahHafal = {};
+            if (!student.ayahHafal[surahNumber]) student.ayahHafal[surahNumber] = [];
             if (!student.progress) student.progress = {};
 
-            const current = student.progress[surahNumber] || 'belum';
-            const next = current === 'belum' ? 'proses' : (current === 'proses' ? 'hafal' : 'belum');
+            const idx = student.ayahHafal[surahNumber].indexOf(ayahNumber);
+            if (idx >= 0) {
+                student.ayahHafal[surahNumber].splice(idx, 1);
+            } else {
+                student.ayahHafal[surahNumber].push(ayahNumber);
+            }
 
-            if (next === 'belum') {
+            const passedCount = student.ayahHafal[surahNumber].length;
+            if (passedCount === meta.ayahs) {
+                student.progress[surahNumber] = 'hafal';
+            } else if (passedCount > 0) {
+                student.progress[surahNumber] = 'proses';
+            } else {
                 delete student.progress[surahNumber];
-            } else {
-                student.progress[surahNumber] = next;
             }
 
-            student.lastUpdated = new Date().toLocaleString('id-ID', {
-                day: '2-digit', month: 'short', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
+            student.lastUpdated = formatNowIndonesian();
+            document.getElementById('eval-ayah-status-select').value = student.progress[surahNumber] || 'belum';
 
-            const hafalCount = Object.values(student.progress).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
-            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
+            allStudentsCache[student.studentId] = student;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(student);
+            updateEvalModalSummary();
 
-            renderEvalSurahList();
-            await syncStudentToSheet(student);
+            const cached = appState.cacheSurahs[surahNumber];
+            if (cached) renderEvalSurahAyahs(cached);
         }
 
-        async function saveTeacherFeedbackForStudent() {
+        function markAllSurahAyahsPassedByPj() {
             const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!student) return;
+            const surahNumber = appState.evaluatingSurahNumber;
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!student || !meta) return;
 
-            const feedbackText = document.getElementById('eval-teacher-feedback-input').value.trim();
-            const todayStr = new Date().toLocaleDateString('id-ID', {
-                day: 'numeric', month: 'long', year: 'numeric'
-            });
+            if (!student.ayahHafal) student.ayahHafal = {};
+            if (!student.progress) student.progress = {};
 
-            student.teacherFeedback = feedbackText;
-            student.teacherFeedbackDate = feedbackText ? todayStr : '';
+            student.ayahHafal[surahNumber] = Array.from({ length: meta.ayahs }, (_, i) => i + 1);
+            student.progress[surahNumber] = 'hafal';
+            student.lastUpdated = formatNowIndonesian();
 
-            showToast('Menyimpan catatan ke Database...', 'info');
-            await syncStudentToSheet(student);
-            showToast('Catatan evaluasi berhasil disimpan!', 'success');
+            document.getElementById('eval-ayah-status-select').value = 'hafal';
+
+            allStudentsCache[student.studentId] = student;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(student);
+            updateEvalModalSummary();
+
+            const cached = appState.cacheSurahs[surahNumber];
+            if (cached) renderEvalSurahAyahs(cached);
+            showToast(`Seluruh ayat QS. ${meta.name} diluluskan!`);
         }
 
-        async function addDummyStudents() {
-            const dummies = [
-                {
-                    studentId: 'aisyah_putri__7a',
-                    name: 'Aisyah Putri',
-                    kelas: '7A',
-                    progress: { 114: 'hafal', 113: 'hafal', 112: 'hafal', 111: 'hafal', 110: 'proses' },
-                    ayahHafal: {},
-                    notes: {},
-                    dailyTarget: 'An-Nasr 1-3',
-                    teacherFeedback: 'MasyaAllah, lanjutkan ke surat Al-Kafirun.',
-                    teacherFeedbackDate: new Date().toLocaleDateString('id-ID'),
-                    lastUpdated: new Date().toLocaleString('id-ID')
-                },
-                {
-                    studentId: 'muhammad_rizky__8b',
-                    name: 'Muhammad Rizky',
-                    kelas: '8B',
-                    progress: { 78: 'hafal', 79: 'proses', 114: 'hafal', 113: 'hafal' },
-                    ayahHafal: {},
-                    notes: {},
-                    dailyTarget: 'An-Naziat 1-15',
-                    teacherFeedback: '',
-                    teacherFeedbackDate: '',
-                    lastUpdated: new Date().toLocaleString('id-ID')
-                }
-            ];
+        function updateStudentSurahStatusFromEvalAyah(newStatus) {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            const surahNumber = appState.evaluatingSurahNumber;
+            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!student || !meta) return;
 
-            showToast('Menambahkan siswa simulasi ke Spreadsheet...', 'info');
-            for (const d of dummies) {
-                await syncStudentToSheet(d);
-            }
-            renderGuruDashboard();
-            showToast('Data siswa simulasi berhasil ditambahkan!', 'success');
-        }
+            if (!student.progress) student.progress = {};
+            if (!student.ayahHafal) student.ayahHafal = {};
 
-        function exportStudentsCSV() {
-            const students = Object.values(allStudentsCache);
-            if (students.length === 0) {
-                showToast('Tidak ada data untuk diexport.', 'warning');
-                return;
-            }
-
-            let csv = 'Nama Siswa,Kelas,Surat Hafal,Persentase,Catatan Guru,Pembaruan Terakhir\n';
-            students.forEach(s => {
-                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
-                csv += `"${s.name}","${s.kelas}",${hafalCount},${percent}%,"${(s.teacherFeedback || '').replace(/"/g, '""')}","${s.lastUpdated || ''}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `Rekap_Hafidz_Juz30_${new Date().toISOString().slice(0, 10)}.csv`;
-            link.click();
-        }
-
-        // ========================================================================
-        // 9. UTILITAS UMUM (STORAGE AMAN, DARK MODE & NOTIFIKASI TOAST)
-        // ========================================================================
-
-        function safeStorageGet(key, fallback) {
-            try {
-                const raw = localStorage.getItem(key);
-                return raw ? JSON.parse(raw) : fallback;
-            } catch (e) {
-                return fallback;
-            }
-        }
-
-        function safeStorageSet(key, val) {
-            try {
-                localStorage.setItem(key, JSON.stringify(val));
-            } catch (e) {
-                console.warn('Penyimpanan lokal tidak tersedia:', e);
-            }
-        }
-
-        function toggleDarkMode() {
-            appState.darkMode = !appState.darkMode;
-            localStorage.setItem('juz30_dark_mode', appState.darkMode);
-            applyDarkMode();
-        }
-
-        function applyDarkMode() {
-            const html = document.documentElement;
-            const icon1 = document.getElementById('theme-icon');
-            const icon2 = document.getElementById('theme-icon-guru');
-            const icon3 = document.getElementById('theme-icon-pj');
-            if (appState.darkMode) {
-                html.classList.add('dark');
-                if (icon1) icon1.className = 'fa-solid fa-sun';
-                if (icon2) icon2.className = 'fa-solid fa-sun';
-                if (icon3) icon3.className = 'fa-solid fa-sun';
+            if (newStatus === 'belum') {
+                delete student.progress[surahNumber];
+                delete student.ayahHafal[surahNumber];
             } else {
-                html.classList.remove('dark');
-                if (icon1) icon1.className = 'fa-solid fa-moon';
-                if (icon2) icon2.className = 'fa-solid fa-moon';
-                if (icon3) icon3.className = 'fa-solid fa-moon';
-            }
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colors = {
-                success: 'bg-emerald-800 text-white border-emerald-600',
-                error: 'bg-red-700 text-white border-red-500',
-                warning: 'bg-amber-600 text-white border-amber-400',
-                info: 'bg-slate-800 text-white border-slate-600'
-            };
-            toast.className = `px-4 py-2.5 rounded-xl shadow-lg border text-xs font-semibold transition-all duration-300 ${colors[type] || colors.info}`;
-            toast.textContent = message;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // Inisialisasi aplikasi saat halaman selesai dimuat
-        window.addEventListener('DOMContentLoaded', async () => {
-            applyDarkMode();
-            if (currentSession) {
-                await fetchAllStudentsFromSheet();
-                if (currentSession.role === 'siswa' && allStudentsCache[currentSession.studentId]) {
-                    const saved = allStudentsCache[currentSession.studentId];
-                    appState.progress = saved.progress || {};
-                    appState.ayahHafal = saved.ayahHafal || {};
-                    appState.notes = saved.notes || {};
-                    appState.dailyTarget = saved.dailyTarget || '';
+                student.progress[surahNumber] = newStatus;
+                if (newStatus === 'hafal') {
+                    student.ayahHafal[surahNumber] = Array.from({ length: meta.ayahs }, (_, i) => i + 1);
                 }
             }
-            initAppWorkspace();
-        });
+
+            student.lastUpdated = formatNowIndonesian();
+            allStudentsCache[student.studentId] = student;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(student);
+            updateEvalModalSummary();
+
+            const cached = appState.cacheSurahs[surahNumber];
+            if (cached) renderEvalSurahAyahs(cached);
+            showToast(`Status QS. ${meta.name} diperbarui`);
+        }
+
+        // ========================================================================
+        // 9. INISIALISASI APLIKASI SAAT HALAMAN SELESAI DIMUAT
+        // ========================================================================
+        window.onload = function () {
+            applyDarkMode();
+            initializeActiveSession();
+            syncFromGoogleSpreadsheet(true).then(() => {
+                if (currentSession && currentSession.role === 'guru') {
+                    renderGuruStudentTable();
+                } else if (currentSession && currentSession.role === 'pj') {
+                    renderPjStudentTable();
+                } else if (currentSession && currentSession.role === 'siswa') {
+                    loadSiswaWorkspace();
+                }
+            });
+        };
     </script>
 </body>
 </html>
