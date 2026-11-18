@@ -92,6 +92,12 @@
         <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-emerald-700/30 overflow-hidden">
             <!-- Header Kartu Login -->
             <div class="bg-gradient-to-r from-emerald-800 to-emerald-900 p-6 text-center text-white relative">
+                <!-- Tanda Titik di Pojok Kanan Atas untuk Memunculkan / Menyembunyikan Login PJ & Guru -->
+                <button type="button" id="btn-secret-role-toggle" onclick="toggleStaffLoginTabs()" aria-label="Buka akses PJ Siswa dan Guru"
+                    class="group absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center hover:bg-white/10 transition focus:outline-none">
+                    <span id="secret-dot-indicator" class="w-1.5 h-1.5 rounded-full bg-emerald-300/60 group-hover:bg-gold-400 transition-all"></span>
+                </button>
+
                 <div class="w-14 h-14 mx-auto rounded-2xl bg-gold-500/20 border border-gold-400/40 flex items-center justify-center text-gold-400 shadow-inner mb-3">
                     <i class="fa-solid fa-book-quran text-2xl"></i>
                 </div>
@@ -99,9 +105,9 @@
                 <p class="text-xs text-emerald-200 mt-1">Sistem Evaluasi dan Tracking Hafalan Al-Qur'an</p>
             </div>
 
-            <!-- Pilihan Peran Login -->
+            <!-- Pilihan Peran Login (Tersembunyi secara default, muncul saat tanda titik diklik) -->
             <div class="p-6 space-y-5">
-                <div class="grid grid-cols-3 gap-1.5 p-1.5 bg-sand-100 dark:bg-slate-800 rounded-2xl">
+                <div id="login-role-tabs" class="hidden grid grid-cols-3 gap-1.5 p-1.5 bg-sand-100 dark:bg-slate-800 rounded-2xl">
                     <button type="button" id="tab-role-siswa" onclick="switchLoginRole('siswa')" class="py-2.5 px-2 rounded-xl text-xs font-bold bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-user-graduate"></i>
                         <span>Siswa</span>
@@ -134,7 +140,7 @@
                             <input type="text" id="login-siswa-kelas" required placeholder="Contoh: 7A, 8B, atau 9C" 
                                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-emerald-600">
                         </div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Gunakan nama kelas sebagai kata sandi.</p>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Gunakan nama kelas sebagai kata sandi masuk agar progres otomatis masuk ke tab kelasmu di Spreadsheet.</p>
                     </div>
 
                     <button type="submit" class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-lg shadow-emerald-700/20 transition flex items-center justify-center gap-2">
@@ -144,7 +150,7 @@
 
                     <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
                         <button type="button" onclick="quickDemoLogin('siswa')" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline">
-                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - XI)
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo Siswa (Ahmad Fauzi - 7A)
                         </button>
                     </div>
                 </form>
@@ -177,7 +183,7 @@
                                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-sand-50 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600">
                         </div>
                         <p class="text-[11px] text-teal-700 dark:text-teal-400 mt-1.5 bg-teal-50 dark:bg-teal-950/50 px-2.5 py-1 rounded-lg border border-teal-200/60 dark:border-teal-800/50">
-                            <i class="fa-solid fa-key mr-1"></i>Info Login Demo: Password PJ adalah <strong class="font-mono">Password pj</strong>
+                            <i class="fa-solid fa-key mr-1"></i>Info Login Demo: Password PJ adalah <strong class="font-mono">pj</strong>
                         </p>
                     </div>
 
@@ -188,7 +194,7 @@
 
                     <div class="pt-2 border-t border-sand-200 dark:border-slate-800 text-center">
                         <button type="button" onclick="quickDemoLogin('pj')" class="text-xs font-semibold text-teal-700 dark:text-teal-400 hover:underline">
-                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo PJ Siswa (Kelas XI)
+                            <i class="fa-solid fa-bolt mr-1"></i>Masuk Cepat Demo PJ Siswa (Kelas 7A)
                         </button>
                     </div>
                 </form>
@@ -896,7 +902,8 @@
             isPlayingAll: false,
             playAllIndex: 0,
             evaluatingStudentId: null,
-            evaluatingSurahNumber: null
+            evaluatingSurahNumber: null,
+            isStaffTabsVisible: false
         };
 
         const audioPlayer = document.getElementById('quran-audio-player');
@@ -1282,6 +1289,30 @@
         // 5. FUNGSI AUTENTIKASI (LOGIN SISWA, PJ SISWA & GURU)
         // ========================================================================
 
+        /**
+         * Memunculkan atau menyembunyikan tab login PJ Siswa & Guru saat tanda titik di pojok atas diklik
+         */
+        function toggleStaffLoginTabs() {
+            const tabsContainer = document.getElementById('login-role-tabs');
+            const dotIndicator = document.getElementById('secret-dot-indicator');
+            if (!tabsContainer) return;
+
+            appState.isStaffTabsVisible = !appState.isStaffTabsVisible;
+
+            if (appState.isStaffTabsVisible) {
+                tabsContainer.classList.remove('hidden');
+                if (dotIndicator) {
+                    dotIndicator.className = 'w-2 h-2 rounded-full bg-gold-400 shadow-sm transition-all';
+                }
+            } else {
+                tabsContainer.classList.add('hidden');
+                switchLoginRole('siswa');
+                if (dotIndicator) {
+                    dotIndicator.className = 'w-1.5 h-1.5 rounded-full bg-emerald-300/60 group-hover:bg-gold-400 transition-all';
+                }
+            }
+        }
+
         function switchLoginRole(role) {
             const roles = ['siswa', 'pj', 'guru'];
             const activeColors = {
@@ -1332,7 +1363,7 @@
             const passOrKelasInput = document.getElementById('login-siswa-kelas').value.trim().toUpperCase();
             if (!nameInput || !passOrKelasInput) return;
 
-            showToast('Menghubungkan ke database...', 'info');
+            showToast('Menghubungkan ke database Spreadsheet...', 'info');
             await fetchAllStudentsFromSheet();
 
             const authCheck = verifyUserFromSheet('siswa', nameInput, passOrKelasInput);
@@ -1351,7 +1382,7 @@
                     finalName = dbMatch.name;
                     finalKelas = dbMatch.kelas;
                 } else if (authCheck.hasSheetUsers) {
-                    showToast('Nama siswa atau password/kelas tidak cocok dengan database!', 'error');
+                    showToast('Nama siswa atau password/kelas tidak cocok dengan data Spreadsheet!', 'error');
                     return;
                 }
             }
@@ -1434,12 +1465,14 @@
                 document.getElementById('login-siswa-kelas').value = '7A';
                 document.getElementById('form-login-siswa').dispatchEvent(new Event('submit'));
             } else if (role === 'pj') {
+                if (!appState.isStaffTabsVisible) toggleStaffLoginTabs();
                 switchLoginRole('pj');
                 document.getElementById('login-pj-nama').value = 'Budi Santoso';
                 document.getElementById('login-pj-kelas').value = '7A';
                 document.getElementById('login-pj-pass').value = PJ_PASSWORD;
                 document.getElementById('form-login-pj').dispatchEvent(new Event('submit'));
             } else {
+                if (!appState.isStaffTabsVisible) toggleStaffLoginTabs();
                 switchLoginRole('guru');
                 document.getElementById('login-guru-nama').value = 'Ustadz Rahmat';
                 document.getElementById('login-guru-pass').value = GURU_PASSWORD;
@@ -1455,6 +1488,15 @@
             document.getElementById('pj-workspace').classList.add('hidden');
             document.getElementById('guru-workspace').classList.add('hidden');
             document.getElementById('view-login').classList.remove('hidden');
+
+            // Sembunyikan kembali tab PJ & Guru saat keluar akun
+            appState.isStaffTabsVisible = false;
+            const tabsContainer = document.getElementById('login-role-tabs');
+            const dotIndicator = document.getElementById('secret-dot-indicator');
+            if (tabsContainer) tabsContainer.classList.add('hidden');
+            if (dotIndicator) dotIndicator.className = 'w-1.5 h-1.5 rounded-full bg-emerald-300/60 group-hover:bg-gold-400 transition-all';
+            switchLoginRole('siswa');
+
             showToast('Anda telah keluar dari akun.', 'info');
         }
 
@@ -2054,7 +2096,7 @@
             student.teacherFeedback = feedbackText;
             student.teacherFeedbackDate = feedbackText ? todayStr : '';
 
-            showToast('Menyimpan catatan ke database...', 'info');
+            showToast('Menyimpan catatan ke Spreadsheet...', 'info');
             await syncStudentToSheet(student);
             showToast('Catatan evaluasi berhasil disimpan!', 'success');
         }
