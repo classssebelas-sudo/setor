@@ -281,7 +281,7 @@
                 <div class="mt-4 pt-3 border-t border-emerald-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div class="flex-1">
                         <div class="flex justify-between text-xs mb-1.5">
-                            <span class="text-emerald-200 font-medium">Progres Hafalan Juz 30 (<span id="stat-hafal-count">0</span>/37 Surat Hafal)</span>
+                            <span class="text-emerald-200 font-medium">Progres Hafalan (<span id="stat-hafal-count">0</span>/<span id="stat-total-surah-count">37</span> Surah Hafal)</span>
                             <span id="stat-percentage" class="font-bold text-gold-400">0%</span>
                         </div>
                         <div class="w-full h-2.5 bg-emerald-950/70 rounded-full overflow-hidden p-0.5">
@@ -328,7 +328,7 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
-                        <button onclick="setSurahFilter('all')" id="filter-btn-all" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition">Semua (37)</button>
+                        <button onclick="setSurahFilter('all')" id="filter-btn-all" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition">Semua (<span id="filter-total-count">37</span>)</button>
                         <button onclick="setSurahFilter('hafal')" id="filter-btn-hafal" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100 transition">Hafal</button>
                         <button onclick="setSurahFilter('proses')" id="filter-btn-proses" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-amber-100 transition">Proses</button>
                         <button onclick="setSurahFilter('belum')" id="filter-btn-belum" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition">Belum</button>
@@ -633,6 +633,10 @@
                 </div>
 
                 <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                    <button type="button" onclick="openGuruAddSurahModal()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-medical"></i>
+                        <span>Tambah Surah Manual</span>
+                    </button>
                     <button onclick="addDummyStudents()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300/60 dark:border-amber-800 hover:bg-amber-200 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-user-plus"></i>
                         <span>Tambah Data Siswa Simulasi</span>
@@ -690,19 +694,25 @@
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="eval-teacher-feedback-input" placeholder="Contoh: Alhamdulillah An-Naba lancar, perbaiki panjang mad pada QS. An-Nazi'at..." 
                         class="flex-1 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border border-amber-200 dark:border-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button onclick="saveTeacherFeedbackForStudent()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shrink-0">
+                    <button type="button" onclick="saveTeacherFeedbackForStudent()" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shrink-0">
                         Simpan Catatan
                     </button>
                 </div>
             </div>
 
-            <!-- Grid Validasi 37 Surat Juz 30 & Tampilan Seluruh Ayat -->
+            <!-- Grid Validasi Surat & Tampilan Seluruh Ayat -->
             <div class="p-4 sm:p-6 overflow-y-auto flex-1">
-                <!-- Tampilan Daftar 37 Surat -->
+                <!-- Tampilan Daftar Surat -->
                 <div id="eval-surah-list-view">
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Validasi Status Hafalan 37 Surat Juz 30</h4>
-                        <span id="eval-surah-hint" class="text-[11px] text-slate-400">Klik nama surat untuk menampilkan seluruh ayat dan menilai tasmi'</span>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Validasi Status Hafalan (<span id="eval-surah-total-label">37</span> Surah)</h4>
+                        <div class="flex items-center gap-2">
+                            <span id="eval-surah-hint" class="text-[11px] text-slate-400">Klik nama surah untuk menampilkan seluruh ayat dan menilai tasmi'</span>
+                            <button type="button" id="btn-eval-quick-add-surah" onclick="openGuruAddSurahModal()" class="hidden px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-200 text-[11px] font-bold transition items-center gap-1">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Tambah Surah</span>
+                            </button>
+                        </div>
                     </div>
                     <div id="eval-surah-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                         <!-- Diisi secara dinamis oleh JavaScript -->
@@ -782,13 +792,141 @@
         </div>
     </div>
 
+    <!-- MODAL TAMBAH SURAH MANUAL OLEH GURU (PENCARIAN 114 SURAH AL-QUR'AN) -->
+    <div id="guru-add-surah-modal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-sand-200 dark:border-slate-800 overflow-hidden flex flex-col max-h-[88vh]">
+            <!-- Header Modal -->
+            <div class="bg-gradient-to-r from-emerald-900 to-emerald-800 text-white px-6 py-4 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-base sm:text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-book-quran text-gold-400"></i>
+                        <span>Tambah Surah Manual</span>
+                    </h3>
+                    <p class="text-xs text-emerald-200 mt-0.5">Pilih surah Al-Qur'an untuk ditambahkan ke Nilai Tasmi' Guru, PJ Siswa, dan Siswa</p>
+                </div>
+                <button type="button" onclick="closeGuruAddSurahModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Kolom Pencarian & Filter Surah -->
+            <div class="p-4 sm:px-6 bg-sand-50 dark:bg-slate-800/60 border-b border-sand-200 dark:border-slate-800 space-y-3">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="guru-search-quran-surah" oninput="renderGuruQuranSurahSearchList()" placeholder="Cari nama surah (contoh: Al-Fatihah, Yasin, Ar-Rahman, Al-Mulk), nomor, atau arti..." 
+                        class="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-sand-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" onclick="setGuruSurahModalFilter('ALL')" id="guru-surah-filter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition">Semua Surah (114)</button>
+                        <button type="button" onclick="setGuruSurahModalFilter('CUSTOM')" id="guru-surah-filter-CUSTOM" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-sand-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">Surah Tambahan Guru (<span id="guru-custom-surah-count">0</span>)</button>
+                    </div>
+                    <span class="text-[11px] text-slate-500 dark:text-slate-400">Klik surah untuk langsung menambahkan</span>
+                </div>
+            </div>
+
+            <!-- Daftar 114 Surah Al-Qur'an -->
+            <div id="guru-quran-surah-list" class="p-4 sm:px-6 overflow-y-auto flex-1 space-y-2">
+                <!-- Diisi secara dinamis oleh JavaScript -->
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="px-6 py-3.5 bg-sand-50 dark:bg-slate-800/60 border-t border-sand-200 dark:border-slate-800 flex justify-end">
+                <button type="button" onclick="closeGuruAddSurahModal()" class="px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition">
+                    Selesai & Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ========================================================================
          BAGIAN 5: LOGIKA JAVASCRIPT & INTEGRASI GOOGLE SPREADSHEET
          ======================================================================== -->
     <script>
         // ========================================================================
-        // 1. DATA LENGKAP 37 SURAT JUZ 30 (SURAT 78 - 114)
+        // 1. DATA LENGKAP 114 SURAH AL-QUR'AN (SURAH 1-77 + 37 SURAH JUZ 30)
         // ========================================================================
+        const SURAH_1_TO_77 = [
+            { number: 1, name: "Al-Fatihah", arabic: "الفاتحة", meaning: "Pembukaan", ayahs: 7, type: "Makkiyah" },
+            { number: 2, name: "Al-Baqarah", arabic: "البقرة", meaning: "Sapi Betina", ayahs: 286, type: "Madaniyah" },
+            { number: 3, name: "Ali 'Imran", arabic: "آل عمران", meaning: "Keluarga Imran", ayahs: 200, type: "Madaniyah" },
+            { number: 4, name: "An-Nisa'", arabic: "النساء", meaning: "Wanita", ayahs: 176, type: "Madaniyah" },
+            { number: 5, name: "Al-Ma'idah", arabic: "المائدة", meaning: "Hidangan", ayahs: 120, type: "Madaniyah" },
+            { number: 6, name: "Al-An'am", arabic: "الأنعام", meaning: "Binatang Ternak", ayahs: 165, type: "Makkiyah" },
+            { number: 7, name: "Al-A'raf", arabic: "الأعراف", meaning: "Tempat Tertinggi", ayahs: 206, type: "Makkiyah" },
+            { number: 8, name: "Al-Anfal", arabic: "الأنفال", meaning: "Rampasan Perang", ayahs: 75, type: "Madaniyah" },
+            { number: 9, name: "At-Taubah", arabic: "التوبة", meaning: "Pengampunan", ayahs: 129, type: "Madaniyah" },
+            { number: 10, name: "Yunus", arabic: "يونس", meaning: "Nabi Yunus", ayahs: 109, type: "Makkiyah" },
+            { number: 11, name: "Hud", arabic: "هود", meaning: "Nabi Hud", ayahs: 123, type: "Makkiyah" },
+            { number: 12, name: "Yusuf", arabic: "يوسف", meaning: "Nabi Yusuf", ayahs: 111, type: "Makkiyah" },
+            { number: 13, name: "Ar-Ra'd", arabic: "الرعد", meaning: "Guruh", ayahs: 43, type: "Madaniyah" },
+            { number: 14, name: "Ibrahim", arabic: "إبراهيم", meaning: "Nabi Ibrahim", ayahs: 52, type: "Makkiyah" },
+            { number: 15, name: "Al-Hijr", arabic: "الحجر", meaning: "Negeri Hijr", ayahs: 99, type: "Makkiyah" },
+            { number: 16, name: "An-Nahl", arabic: "النحل", meaning: "Lebah", ayahs: 128, type: "Makkiyah" },
+            { number: 17, name: "Al-Isra'", arabic: "الإسراء", meaning: "Perjalanan Malam", ayahs: 111, type: "Makkiyah" },
+            { number: 18, name: "Al-Kahf", arabic: "الكهف", meaning: "Gua", ayahs: 110, type: "Makkiyah" },
+            { number: 19, name: "Maryam", arabic: "مريم", meaning: "Maryam", ayahs: 98, type: "Makkiyah" },
+            { number: 20, name: "Taha", arabic: "طه", meaning: "Taha", ayahs: 135, type: "Makkiyah" },
+            { number: 21, name: "Al-Anbiya'", arabic: "الأنبياء", meaning: "Para Nabi", ayahs: 112, type: "Makkiyah" },
+            { number: 22, name: "Al-Hajj", arabic: "الحج", meaning: "Haji", ayahs: 78, type: "Madaniyah" },
+            { number: 23, name: "Al-Mu'minun", arabic: "المؤمنون", meaning: "Orang-Orang Mukmin", ayahs: 118, type: "Makkiyah" },
+            { number: 24, name: "An-Nur", arabic: "النور", meaning: "Cahaya", ayahs: 64, type: "Madaniyah" },
+            { number: 25, name: "Al-Furqan", arabic: "الفرقان", meaning: "Pembeda", ayahs: 77, type: "Makkiyah" },
+            { number: 26, name: "Asy-Syu'ara'", arabic: "الشعراء", meaning: "Para Penyair", ayahs: 227, type: "Makkiyah" },
+            { number: 27, name: "An-Naml", arabic: "النمل", meaning: "Semut", ayahs: 93, type: "Makkiyah" },
+            { number: 28, name: "Al-Qasas", arabic: "القصص", meaning: "Kisah-Kisah", ayahs: 88, type: "Makkiyah" },
+            { number: 29, name: "Al-'Ankabut", arabic: "العنكبوت", meaning: "Laba-Laba", ayahs: 69, type: "Makkiyah" },
+            { number: 30, name: "Ar-Rum", arabic: "الروم", meaning: "Bangsa Romawi", ayahs: 60, type: "Makkiyah" },
+            { number: 31, name: "Luqman", arabic: "لقمان", meaning: "Luqman", ayahs: 34, type: "Makkiyah" },
+            { number: 32, name: "As-Sajdah", arabic: "السجدة", meaning: "Sajdah", ayahs: 30, type: "Makkiyah" },
+            { number: 33, name: "Al-Ahzab", arabic: "الأحزاب", meaning: "Golongan yang Bersekutu", ayahs: 73, type: "Madaniyah" },
+            { number: 34, name: "Saba'", arabic: "سبأ", meaning: "Kaum Saba'", ayahs: 54, type: "Makkiyah" },
+            { number: 35, name: "Fatir", arabic: "فاطر", meaning: "Pencipta", ayahs: 45, type: "Makkiyah" },
+            { number: 36, name: "Yasin", arabic: "يس", meaning: "Yasin", ayahs: 83, type: "Makkiyah" },
+            { number: 37, name: "As-Saffat", arabic: "الصافات", meaning: "Barisan-Barisan", ayahs: 182, type: "Makkiyah" },
+            { number: 38, name: "Sad", arabic: "ص", meaning: "Sad", ayahs: 88, type: "Makkiyah" },
+            { number: 39, name: "Az-Zumar", arabic: "الزمر", meaning: "Rombongan-Rombongan", ayahs: 75, type: "Makkiyah" },
+            { number: 40, name: "Ghafir", arabic: "غافر", meaning: "Yang Mengampuni", ayahs: 85, type: "Makkiyah" },
+            { number: 41, name: "Fussilat", arabic: "فصلت", meaning: "Yang Dijelaskan", ayahs: 54, type: "Makkiyah" },
+            { number: 42, name: "Asy-Syura", arabic: "الشورى", meaning: "Musyawarah", ayahs: 53, type: "Makkiyah" },
+            { number: 43, name: "Az-Zukhruf", arabic: "الزخرف", meaning: "Perhiasan", ayahs: 89, type: "Makkiyah" },
+            { number: 44, name: "Ad-Dukhan", arabic: "الدخان", meaning: "Kabut", ayahs: 59, type: "Makkiyah" },
+            { number: 45, name: "Al-Jasiyah", arabic: "الجاثية", meaning: "Yang Berlutut", ayahs: 37, type: "Makkiyah" },
+            { number: 46, name: "Al-Ahqaf", arabic: "الأحقاف", meaning: "Bukit-Bukit Pasir", ayahs: 35, type: "Makkiyah" },
+            { number: 47, name: "Muhammad", arabic: "محمد", meaning: "Nabi Muhammad", ayahs: 38, type: "Madaniyah" },
+            { number: 48, name: "Al-Fath", arabic: "الفتح", meaning: "Kemenangan", ayahs: 29, type: "Madaniyah" },
+            { number: 49, name: "Al-Hujurat", arabic: "الحجرات", meaning: "Kamar-Kamar", ayahs: 18, type: "Madaniyah" },
+            { number: 50, name: "Qaf", arabic: "ق", meaning: "Qaf", ayahs: 45, type: "Makkiyah" },
+            { number: 51, name: "Az-Zariyat", arabic: "الذاريات", meaning: "Angin yang Menerbangkan", ayahs: 60, type: "Makkiyah" },
+            { number: 52, name: "At-Tur", arabic: "الطور", meaning: "Bukit", ayahs: 49, type: "Makkiyah" },
+            { number: 53, name: "An-Najm", arabic: "النجم", meaning: "Bintang", ayahs: 62, type: "Makkiyah" },
+            { number: 54, name: "Al-Qamar", arabic: "القمر", meaning: "Bulan", ayahs: 55, type: "Makkiyah" },
+            { number: 55, name: "Ar-Rahman", arabic: "الرحمن", meaning: "Yang Maha Pemurah", ayahs: 78, type: "Madaniyah" },
+            { number: 56, name: "Al-Waqi'ah", arabic: "الواقعة", meaning: "Hari Kiamat", ayahs: 96, type: "Makkiyah" },
+            { number: 57, name: "Al-Hadid", arabic: "الحديد", meaning: "Besi", ayahs: 29, type: "Madaniyah" },
+            { number: 58, name: "Al-Mujadalah", arabic: "المجادلة", meaning: "Wanita yang Mengajukan Gugatan", ayahs: 22, type: "Madaniyah" },
+            { number: 59, name: "Al-Hasyr", arabic: "الحشر", meaning: "Pengusiran", ayahs: 24, type: "Madaniyah" },
+            { number: 60, name: "Al-Mumtahanah", arabic: "الممتحنة", meaning: "Wanita yang Diuji", ayahs: 13, type: "Madaniyah" },
+            { number: 61, name: "As-Saff", arabic: "الصف", meaning: "Barisan", ayahs: 14, type: "Madaniyah" },
+            { number: 62, name: "Al-Jumu'ah", arabic: "الجمعة", meaning: "Hari Jum'at", ayahs: 11, type: "Madaniyah" },
+            { number: 63, name: "Al-Munafiqun", arabic: "المنافقون", meaning: "Orang-Orang Munafik", ayahs: 11, type: "Madaniyah" },
+            { number: 64, name: "At-Tagabun", arabic: "التغابن", meaning: "Hari Dinampakkan Kesalahan", ayahs: 18, type: "Madaniyah" },
+            { number: 65, name: "At-Talaq", arabic: "الطلاق", meaning: "Talak", ayahs: 12, type: "Madaniyah" },
+            { number: 66, name: "At-Tahrim", arabic: "التحريم", meaning: "Mengharamkan", ayahs: 12, type: "Madaniyah" },
+            { number: 67, name: "Al-Mulk", arabic: "الملك", meaning: "Kerajaan", ayahs: 30, type: "Makkiyah" },
+            { number: 68, name: "Al-Qalam", arabic: "القلم", meaning: "Pena", ayahs: 52, type: "Makkiyah" },
+            { number: 69, name: "Al-Haqqah", arabic: "الحاقة", meaning: "Hari Kiamat", ayahs: 52, type: "Makkiyah" },
+            { number: 70, name: "Al-Ma'arij", arabic: "المعارج", meaning: "Tempat Naik", ayahs: 44, type: "Makkiyah" },
+            { number: 71, name: "Nuh", arabic: "نوح", meaning: "Nabi Nuh", ayahs: 28, type: "Makkiyah" },
+            { number: 72, name: "Al-Jinn", arabic: "الجن", meaning: "Jin", ayahs: 28, type: "Makkiyah" },
+            { number: 73, name: "Al-Muzzammil", arabic: "المزمل", meaning: "Orang yang Berselimut", ayahs: 20, type: "Makkiyah" },
+            { number: 74, name: "Al-Muddassir", arabic: "المدثر", meaning: "Orang yang Berkemul", ayahs: 56, type: "Makkiyah" },
+            { number: 75, name: "Al-Qiyamah", arabic: "القيامة", meaning: "Hari Kiamat", ayahs: 40, type: "Makkiyah" },
+            { number: 76, name: "Al-Insan", arabic: "الإنسان", meaning: "Manusia", ayahs: 31, type: "Madaniyah" },
+            { number: 77, name: "Al-Mursalat", arabic: "المرسلات", meaning: "Malaikat yang Diutus", ayahs: 50, type: "Makkiyah" }
+        ];
+
         const JUZ_30_SURAHS = [
             { number: 78, name: "An-Naba'", arabic: "النبإ", meaning: "Berita Besar", ayahs: 40, type: "Makkiyah" },
             { number: 79, name: "An-Nazi'at", arabic: "النازعات", meaning: "Malaikat yang Mencabut", ayahs: 46, type: "Makkiyah" },
@@ -829,6 +967,8 @@
             { number: 114, name: "An-Nas", arabic: "الناس", meaning: "Umat Manusia", ayahs: 6, type: "Makkiyah" }
         ];
 
+        const ALL_QURAN_SURAHS = [...SURAH_1_TO_77, ...JUZ_30_SURAHS];
+
         // ========================================================================
         // 2. KONFIGURASI GOOGLE SPREADSHEET & HELPER PENYIMPANAN AMAN
         // ========================================================================
@@ -838,6 +978,7 @@
 
         const DB_USERS_KEY = 'juz30_all_students_db';
         const DB_LOGIN_USERS_KEY = 'juz30_login_users_db';
+        const DB_CUSTOM_SURAHS_KEY = 'juz30_custom_surahs';
         const SESSION_KEY = 'juz30_active_session';
 
         function safeStorageGet(key, fallback) {
@@ -860,6 +1001,41 @@
         let currentSession = safeStorageGet(SESSION_KEY, null);
         let allStudentsCache = safeStorageGet(DB_USERS_KEY, {});
         let loginUsersCache = safeStorageGet(DB_LOGIN_USERS_KEY, []);
+        let customSurahsCache = safeStorageGet(DB_CUSTOM_SURAHS_KEY, []);
+
+        function getSurahMeta(surahNumber) {
+            return ALL_QURAN_SURAHS.find(s => s.number === Number(surahNumber));
+        }
+
+        function getActiveSurahList() {
+            const customNums = new Set((customSurahsCache || []).map(Number));
+            const baseNums = new Set(JUZ_30_SURAHS.map(s => s.number));
+            const combined = [];
+
+            ALL_QURAN_SURAHS.forEach(surah => {
+                if (baseNums.has(surah.number) || customNums.has(surah.number)) {
+                    combined.push({
+                        ...surah,
+                        isCustom: !baseNums.has(surah.number)
+                    });
+                }
+            });
+
+            return combined;
+        }
+
+        function updateAllTotalSurahLabels() {
+            const totalCount = getActiveSurahList().length;
+            const el1 = document.getElementById('stat-total-surah-count');
+            const el2 = document.getElementById('filter-total-count');
+            const el3 = document.getElementById('eval-surah-total-label');
+            const el4 = document.getElementById('guru-custom-surah-count');
+
+            if (el1) el1.textContent = totalCount;
+            if (el2) el2.textContent = totalCount;
+            if (el3) el3.textContent = totalCount;
+            if (el4) el4.textContent = (customSurahsCache || []).length;
+        }
 
         // Isi data contoh awal jika penyimpanan masih kosong agar demo langsung berjalan
         if (Object.keys(allStudentsCache).length === 0) {
@@ -912,6 +1088,7 @@
             darkMode: localStorage.getItem('juz30_dark_mode') === 'true',
             currentFilter: 'all',
             pjFilter: 'ALL',
+            guruSurahModalFilter: 'ALL',
             currentSurah: null,
             cacheSurahs: {},
             hafalanMode: false,
@@ -1019,6 +1196,11 @@
                         loginUsersCache = result.users;
                         safeStorageSet(DB_LOGIN_USERS_KEY, loginUsersCache);
                     }
+                    if (Array.isArray(result.customSurahs)) {
+                        customSurahsCache = [...new Set(result.customSurahs.map(Number).filter(n => n >= 1 && n <= 114))];
+                        safeStorageSet(DB_CUSTOM_SURAHS_KEY, customSurahsCache);
+                        updateAllTotalSurahLabels();
+                    }
                     if (!silent) {
                         showToast('Data berhasil disinkronkan dari Google Spreadsheet');
                     }
@@ -1038,10 +1220,24 @@
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ student: studentObj })
+                    body: JSON.stringify({ student: studentObj, customSurahs: customSurahsCache })
                 });
             } catch (error) {
                 console.warn('Gagal mengirim pembaruan ke Spreadsheet:', error);
+            }
+        }
+
+        async function syncCustomSurahsToGoogleSpreadsheet() {
+            if (!GOOGLE_SCRIPT_URL) return;
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'saveCustomSurahs', customSurahs: customSurahsCache })
+                });
+            } catch (error) {
+                console.warn('Gagal menyinkronkan daftar surah tambahan:', error);
             }
         }
 
@@ -1273,8 +1469,12 @@
         }
 
         function updateSiswaHeaderStats() {
-            const hafalCount = Object.values(appState.progress).filter(s => s === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
+            updateAllTotalSurahLabels();
+            const activeSurahs = getActiveSurahList();
+            const totalSurahs = activeSurahs.length || 37;
+            const activeNums = new Set(activeSurahs.map(s => s.number));
+            const hafalCount = Object.entries(appState.progress).filter(([num, s]) => activeNums.has(Number(num)) && s === 'hafal').length;
+            const percent = Math.round((hafalCount / totalSurahs) * 100);
 
             document.getElementById('stat-hafal-count').textContent = hafalCount;
             document.getElementById('stat-percentage').textContent = `${percent}%`;
@@ -1314,21 +1514,22 @@
         }
 
         function renderSurahGrid() {
+            updateAllTotalSurahLabels();
             const grid = document.getElementById('surah-grid');
             const query = (document.getElementById('surah-search-input').value || '').toLowerCase();
             grid.innerHTML = '';
 
-            const filtered = JUZ_30_SURAHS.filter(surah => {
+            const filtered = getActiveSurahList().filter(surah => {
                 const status = appState.progress[surah.number] || 'belum';
                 const matchesFilter = appState.currentFilter === 'all' || status === appState.currentFilter;
-                const matchesSearch = surah.name.toLowerCase().includes(query) || surah.meaning.toLowerCase().includes(query);
+                const matchesSearch = surah.name.toLowerCase().includes(query) || surah.meaning.toLowerCase().includes(query) || String(surah.number) === query.trim();
                 return matchesFilter && matchesSearch;
             });
 
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800">
-                        <p class="text-sm text-slate-500">Tidak ada surat yang sesuai dengan pencarian atau filter.</p>
+                        <p class="text-sm text-slate-500">Tidak ada surah yang sesuai dengan pencarian atau filter.</p>
                     </div>
                 `;
                 return;
@@ -1339,7 +1540,7 @@
                 const passedAyahs = (appState.ayahHafal[surah.number] || []).length;
 
                 let statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Belum</span>';
-                let cardBorder = 'border-sand-200 dark:border-slate-800';
+                let cardBorder = surah.isCustom ? 'border-sky-300 dark:border-sky-800' : 'border-sand-200 dark:border-slate-800';
 
                 if (status === 'hafal') {
                     statusBadge = '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">Hafal ✓</span>';
@@ -1349,6 +1550,10 @@
                     cardBorder = 'border-amber-300 dark:border-amber-800';
                 }
 
+                const customTag = surah.isCustom
+                    ? '<span class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300">Tambahan Guru</span>'
+                    : '';
+
                 const card = document.createElement('div');
                 card.className = `bg-white dark:bg-slate-900 p-4 rounded-2xl border ${cardBorder} shadow-sm hover:shadow-md hover:border-emerald-500 transition cursor-pointer flex flex-col justify-between gap-3`;
                 card.onclick = () => openSurahDetail(surah.number);
@@ -1356,15 +1561,15 @@
                 card.innerHTML = `
                     <div class="flex items-start justify-between gap-2">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-200/70 dark:border-emerald-800/50">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center border border-emerald-200/70 dark:border-emerald-800/50 shrink-0">
                                 ${surah.number}
                             </div>
                             <div>
-                                <h3 class="font-bold text-sm text-slate-900 dark:text-white">${surah.name}</h3>
+                                <h3 class="font-bold text-sm text-slate-900 dark:text-white flex flex-wrap items-center">${surah.name}${customTag}</h3>
                                 <p class="text-[11px] text-slate-500 dark:text-slate-400">${surah.meaning} • ${surah.ayahs} Ayat</p>
                             </div>
                         </div>
-                        <div class="arabic-text text-2xl font-bold text-emerald-800 dark:text-emerald-400">${surah.arabic}</div>
+                        <div class="arabic-text text-2xl font-bold text-emerald-800 dark:text-emerald-400 shrink-0">${surah.arabic}</div>
                     </div>
 
                     <div class="pt-2.5 border-t border-sand-100 dark:border-slate-800 flex items-center justify-between">
@@ -1376,13 +1581,15 @@
             });
         }
 
-        // Mengambil seluruh ayat surat (Arab, Latin, Terjemahan Indonesia, & Audio Murottal)
+        // Mengambil seluruh ayat surah (Arab, Latin, Terjemahan Indonesia, & Audio Murottal)
         async function fetchSurahWithAyahs(surahNumber) {
             if (appState.cacheSurahs[surahNumber]) {
                 return appState.cacheSurahs[surahNumber];
             }
 
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
+            if (!meta) return { meta: { number: surahNumber, name: `Surah ${surahNumber}`, arabic: '', meaning: '', ayahs: 0, type: '' }, ayahs: [] };
+
             try {
                 const url = `https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,en.transliteration,id.indonesian,ar.alafasy`;
                 const res = await fetch(url);
@@ -1427,7 +1634,7 @@
         }
 
         async function openSurahDetail(surahNumber) {
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
             if (!meta) return;
 
             appState.currentSurah = surahNumber;
@@ -1506,7 +1713,7 @@
                 appState.ayahHafal[surahNumber].push(ayahNumber);
             }
 
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
             const totalPassed = appState.ayahHafal[surahNumber].length;
             if (meta && totalPassed === meta.ayahs) {
                 appState.progress[surahNumber] = 'hafal';
@@ -1694,8 +1901,11 @@
 
             filtered.forEach(student => {
                 const isSudah = hasStudentSetoran(student);
-                const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
+                const activeSurahs = getActiveSurahList();
+                const totalSurahs = activeSurahs.length || 37;
+                const activeNums = new Set(activeSurahs.map(s => s.number));
+                const hafalCount = Object.entries(student.progress || {}).filter(([num, v]) => activeNums.has(Number(num)) && v === 'hafal').length;
+                const percent = Math.round((hafalCount / totalSurahs) * 100);
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition';
@@ -1712,7 +1922,7 @@
                             <div class="w-24 h-2 bg-sand-200 dark:bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full bg-teal-600 rounded-full" style="width: ${percent}%"></div>
                             </div>
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/37 (${percent}%)</span>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/${totalSurahs} (${percent}%)</span>
                         </div>
                     </td>
                     <td class="py-3.5 px-4 text-xs text-slate-500">${student.lastUpdated || '-'}</td>
@@ -1807,13 +2017,17 @@
             });
 
             // Hitung ringkasan statistik global
+            const activeSurahs = getActiveSurahList();
+            const totalSurahs = activeSurahs.length || 37;
+            const activeNums = new Set(activeSurahs.map(s => s.number));
+
             const totalSiswa = students.length;
             const sudahSetoran = students.filter(s => hasStudentSetoran(s)).length;
             const belumSetoran = totalSiswa - sudahSetoran;
             const avgPercent = totalSiswa > 0
                 ? Math.round(students.reduce((acc, s) => {
-                    const h = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                    return acc + (h / 37) * 100;
+                    const h = Object.entries(s.progress || {}).filter(([num, v]) => activeNums.has(Number(num)) && v === 'hafal').length;
+                    return acc + (h / totalSurahs) * 100;
                 }, 0) / totalSiswa)
                 : 0;
 
@@ -1848,8 +2062,8 @@
 
             filtered.forEach(student => {
                 const isSudah = hasStudentSetoran(student);
-                const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
+                const hafalCount = Object.entries(student.progress || {}).filter(([num, v]) => activeNums.has(Number(num)) && v === 'hafal').length;
+                const percent = Math.round((hafalCount / totalSurahs) * 100);
 
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-sand-50/70 dark:hover:bg-slate-800/40 transition';
@@ -1871,7 +2085,7 @@
                             <div class="w-24 h-2 bg-sand-200 dark:bg-slate-800 rounded-full overflow-hidden">
                                 <div class="h-full bg-emerald-600 rounded-full" style="width: ${percent}%"></div>
                             </div>
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/37 (${percent}%)</span>
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">${hafalCount}/${totalSurahs} (${percent}%)</span>
                         </div>
                     </td>
                     <td class="py-3.5 px-4 text-xs text-slate-500">${student.lastUpdated || '-'}</td>
@@ -1920,166 +2134,171 @@
         function exportStudentsCSV() {
             const students = Object.values(allStudentsCache);
             if (students.length === 0) {
-                showToast('Tidak ada data siswa untuk diekspor', 'info');
+                showToast('Belum ada data siswa untuk diekspor', 'info');
                 return;
             }
 
-            const headers = ['Nama Siswa', 'Kelas', 'Status Setoran', 'Surat Hafal', 'Persentase (%)', 'Catatan Guru', 'Aktivitas Terakhir'];
+            const headers = ['Nama Siswa', 'Kelas', 'Status Setoran', 'Surah Hafal', 'Persentase (%)', 'Catatan Guru', 'Aktivitas Terakhir'];
+            const activeSurahs = getActiveSurahList();
+            const totalSurahs = activeSurahs.length || 37;
+            const activeNums = new Set(activeSurahs.map(s => s.number));
+
             const rows = students.map(s => {
                 const isSudah = hasStudentSetoran(s) ? 'Sudah Setoran' : 'Belum Setoran';
-                const hafalCount = Object.values(s.progress || {}).filter(v => v === 'hafal').length;
-                const percent = Math.round((hafalCount / 37) * 100);
+                const hafalCount = Object.entries(s.progress || {}).filter(([num, v]) => activeNums.has(Number(num)) && v === 'hafal').length;
+                const percent = Math.round((hafalCount / totalSurahs) * 100);
+                const feedback = (s.teacherFeedback || '-').replace(/"/g, '""');
+                const updated = (s.lastUpdated || '-').replace(/"/g, '""');
                 return [
-                    `"${s.name}"`,
-                    `"${s.kelas}"`,
+                    `"${(s.name || '').replace(/"/g, '""')}"`,
+                    `"${(s.kelas || '').replace(/"/g, '""')}"`,
                     `"${isSudah}"`,
-                    hafalCount,
-                    percent,
-                    `"${(s.teacherFeedback || '-').replace(/"/g, '""')}"`,
-                    `"${s.lastUpdated || '-'}"`
+                    `"${hafalCount}/${totalSurahs}"`,
+                    `"${percent}%"`,
+                    `"${feedback}"`,
+                    `"${updated}"`
                 ].join(',');
             });
 
-            const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
-            const encodedUri = encodeURI(csvContent);
+            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', `Laporan_Tahfidz_Juz30_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.href = url;
+            link.download = `Rekap_Hafalan_SETARA_${new Date().toISOString().slice(0, 10)}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast('File CSV laporan berhasil diunduh');
+            URL.revokeObjectURL(url);
+            showToast('Rekap CSV berhasil diunduh');
         }
 
-        // ========================================================================
-        // 8. MODAL PENILAIAN SETORAN (TASMI') GURU & PJ SISWA + TAMPILAN AYAT
-        // ========================================================================
         function hasStudentSetoran(student) {
             if (!student) return false;
-            const hasSurah = student.progress && Object.keys(student.progress).length > 0;
-            const hasAyah = student.ayahHafal && Object.keys(student.ayahHafal).length > 0;
-            return Boolean(hasSurah || hasAyah);
+            const progValues = Object.values(student.progress || {});
+            if (progValues.some(v => v === 'hafal' || v === 'proses')) return true;
+            const ayahLists = Object.values(student.ayahHafal || {});
+            if (ayahLists.some(arr => Array.isArray(arr) && arr.length > 0)) return true;
+            return false;
         }
 
-        function updateEvalModalSummary() {
-            const student = allStudentsCache[appState.evaluatingStudentId];
+        // ========================================================================
+        // 8. MODAL PENILAIAN SETORAN / TASMI' (GURU & PJ SISWA)
+        // ========================================================================
+        function updateEvalModalSummary(student) {
             if (!student) return;
-            const hafalCount = Object.values(student.progress || {}).filter(v => v === 'hafal').length;
-            const percent = Math.round((hafalCount / 37) * 100);
-            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/37 Surat Hafal (${percent}%)`;
+            const activeSurahs = getActiveSurahList();
+            const totalSurahs = activeSurahs.length || 37;
+            const activeNums = new Set(activeSurahs.map(s => s.number));
+            const hafalCount = Object.entries(student.progress || {}).filter(([num, v]) => activeNums.has(Number(num)) && v === 'hafal').length;
+            const percent = Math.round((hafalCount / totalSurahs) * 100);
+            document.getElementById('eval-modal-siswa-summary').textContent = `Progres: ${hafalCount}/${totalSurahs} Surah Hafal (${percent}%)`;
         }
 
         function openGuruEvalModal(studentId) {
             const student = allStudentsCache[studentId];
-            if (!student) return;
+            if (!student) {
+                showToast('Data siswa tidak ditemukan', 'error');
+                return;
+            }
 
             appState.evaluatingStudentId = studentId;
             appState.evaluatingSurahNumber = null;
 
-            const isPj = currentSession && currentSession.role === 'pj';
-
             document.getElementById('eval-modal-siswa-name').textContent = student.name;
             document.getElementById('eval-modal-siswa-kelas').textContent = `Kelas ${student.kelas}`;
-            updateEvalModalSummary();
+            updateEvalModalSummary(student);
 
+            const isGuru = currentSession && currentSession.role === 'guru';
             const feedbackSection = document.getElementById('eval-teacher-feedback-section');
-            if (isPj) {
-                feedbackSection.classList.add('hidden');
-                document.getElementById('eval-surah-hint').textContent = 'Klik nama surat untuk menampilkan seluruh ayat dan menyimak setoran';
-            } else {
+            const quickAddSurahBtn = document.getElementById('btn-eval-quick-add-surah');
+
+            if (isGuru) {
                 feedbackSection.classList.remove('hidden');
                 document.getElementById('eval-teacher-feedback-input').value = student.teacherFeedback || '';
-                document.getElementById('eval-surah-hint').textContent = 'Klik nama surat untuk menampilkan seluruh ayat dan menilai tasmi\'';
+                quickAddSurahBtn.classList.remove('hidden');
+                quickAddSurahBtn.classList.add('inline-flex');
+            } else {
+                feedbackSection.classList.add('hidden');
+                quickAddSurahBtn.classList.add('hidden');
+                quickAddSurahBtn.classList.remove('inline-flex');
             }
 
-            // Pastikan tampilan awal modal berada di daftar 37 surat
             document.getElementById('eval-surah-list-view').classList.remove('hidden');
             document.getElementById('eval-ayah-view').classList.add('hidden');
+            updateAllTotalSurahLabels();
+            renderEvalSurahList(student);
 
-            renderEvalSurahList();
             document.getElementById('guru-eval-modal').classList.remove('hidden');
         }
 
         function closeGuruEvalModal() {
             stopAudioPlayback();
-            document.getElementById('guru-eval-modal').classList.add('hidden');
             appState.evaluatingStudentId = null;
             appState.evaluatingSurahNumber = null;
+            document.getElementById('guru-eval-modal').classList.add('hidden');
 
-            if (currentSession && currentSession.role === 'pj') {
-                renderPjStudentTable();
-            } else if (currentSession && currentSession.role === 'guru') {
+            if (currentSession && currentSession.role === 'guru') {
                 renderGuruStudentTable();
+            } else if (currentSession && currentSession.role === 'pj') {
+                renderPjStudentTable();
             }
         }
 
-        function saveTeacherFeedbackForStudent() {
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!student) return;
+        function renderEvalSurahList(student) {
+            const listEl = document.getElementById('eval-surah-list');
+            if (!listEl || !student) return;
+            listEl.innerHTML = '';
 
-            const noteText = document.getElementById('eval-teacher-feedback-input').value.trim();
-            student.teacherFeedback = noteText;
-            student.teacherFeedbackDate = formatNowIndonesian();
-            student.lastUpdated = formatNowIndonesian();
-
-            allStudentsCache[student.studentId] = student;
-            safeStorageSet(DB_USERS_KEY, allStudentsCache);
-            syncStudentToGoogleSpreadsheet(student);
-            showToast('Catatan evaluasi guru berhasil disimpan');
-        }
-
-        function renderEvalSurahList() {
-            const container = document.getElementById('eval-surah-list');
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!container || !student) return;
-
-            container.innerHTML = '';
-
-            JUZ_30_SURAHS.forEach(surah => {
+            const activeSurahs = getActiveSurahList();
+            activeSurahs.forEach(surah => {
                 const status = (student.progress && student.progress[surah.number]) || 'belum';
-                const passedCount = (student.ayahHafal && student.ayahHafal[surah.number] && student.ayahHafal[surah.number].length) || 0;
+                const passedCount = ((student.ayahHafal && student.ayahHafal[surah.number]) || []).length;
 
-                let badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-500';
-                let badgeLabel = 'Belum';
-                let borderClass = 'border-sand-200 dark:border-slate-800';
+                let badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">Belum</span>';
+                let borderClass = surah.isCustom ? 'border-sky-300 dark:border-sky-800' : 'border-sand-200 dark:border-slate-800';
 
                 if (status === 'hafal') {
-                    badgeClass = 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400';
-                    badgeLabel = 'Hafal ✓';
+                    badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">Hafal ✓</span>';
                     borderClass = 'border-emerald-300 dark:border-emerald-800';
                 } else if (status === 'proses') {
-                    badgeClass = 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400';
-                    badgeLabel = 'Proses';
+                    badgeHtml = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400">Proses</span>';
                     borderClass = 'border-amber-300 dark:border-amber-800';
                 }
 
+                const customLabel = surah.isCustom
+                    ? '<span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300">Tambahan</span>'
+                    : '';
+
                 const card = document.createElement('button');
                 card.type = 'button';
-                card.className = `group p-3 rounded-2xl border ${borderClass} bg-white dark:bg-slate-900 hover:border-emerald-500 hover:shadow-sm transition flex items-center justify-between gap-2 text-left`;
                 card.onclick = () => openEvalSurahAyahView(surah.number);
-
+                card.className = `text-left p-3.5 rounded-2xl border ${borderClass} bg-white dark:bg-slate-900 hover:border-emerald-500 hover:shadow-sm transition flex flex-col justify-between gap-2`;
                 card.innerHTML = `
-                    <div class="min-w-0">
-                        <p class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 truncate flex items-center gap-1.5">
-                            <span>${surah.number}. ${surah.name}</span>
-                            <i class="fa-solid fa-book-open text-[10px] opacity-60 group-hover:opacity-100"></i>
-                        </p>
-                        <p class="text-[11px] text-slate-400">${passedCount}/${surah.ayahs} Ayat Lulus</p>
+                    <div class="flex items-start justify-between gap-2 w-full">
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 dark:text-white flex flex-wrap items-center">
+                                <span>${surah.number}. ${surah.name}</span>${customLabel}
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-0.5">${surah.ayahs} Ayat • ${passedCount}/${surah.ayahs} Lulus</p>
+                        </div>
+                        <span class="arabic-text text-lg font-bold text-emerald-800 dark:text-emerald-400">${surah.arabic}</span>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 ${badgeClass}">${badgeLabel}</span>
+                    <div class="flex items-center justify-between w-full pt-2 border-t border-sand-100 dark:border-slate-800">
+                        <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">Buka Ayat & Nilai →</span>
+                        ${badgeHtml}
+                    </div>
                 `;
-                container.appendChild(card);
+                listEl.appendChild(card);
             });
         }
 
-        // Menampilkan seluruh ayat dari surat yang diklik pada modal Nilai Tasmi' Guru / Setoran PJ
         async function openEvalSurahAyahView(surahNumber) {
             const student = allStudentsCache[appState.evaluatingStudentId];
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
             if (!student || !meta) return;
 
             appState.evaluatingSurahNumber = surahNumber;
-
             document.getElementById('eval-surah-list-view').classList.add('hidden');
             document.getElementById('eval-ayah-view').classList.remove('hidden');
 
@@ -2087,60 +2306,16 @@
             document.getElementById('eval-ayah-surah-meta').textContent = `${meta.meaning} • ${meta.ayahs} Ayat • ${meta.type}`;
             document.getElementById('eval-ayah-status-select').value = (student.progress && student.progress[surahNumber]) || 'belum';
 
-            const ayahContainer = document.getElementById('eval-ayah-container');
-            ayahContainer.innerHTML = `
-                <div class="p-8 text-center bg-sand-50 dark:bg-slate-800/50 rounded-2xl border border-sand-200 dark:border-slate-700">
+            const container = document.getElementById('eval-ayah-container');
+            container.innerHTML = `
+                <div class="p-8 text-center bg-white dark:bg-slate-900 rounded-2xl border border-sand-200 dark:border-slate-800">
                     <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-700 mb-2"></i>
                     <p class="text-xs text-slate-500">Memuat seluruh ayat QS. ${meta.name}...</p>
                 </div>
             `;
 
             const surahData = await fetchSurahWithAyahs(surahNumber);
-            renderEvalSurahAyahs(surahData);
-        }
-
-        function renderEvalSurahAyahs(surahData) {
-            const ayahContainer = document.getElementById('eval-ayah-container');
-            const student = allStudentsCache[appState.evaluatingStudentId];
-            if (!ayahContainer || !student || !surahData) return;
-
-            const surahNumber = surahData.meta.number;
-            const passedAyahs = (student.ayahHafal && student.ayahHafal[surahNumber]) || [];
-            ayahContainer.innerHTML = '';
-
-            surahData.ayahs.forEach(ayah => {
-                const isPassed = passedAyahs.includes(ayah.numberInSurah);
-
-                const card = document.createElement('div');
-                card.className = `p-4 rounded-2xl border ${isPassed ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20' : 'border-sand-200 dark:border-slate-800 bg-white dark:bg-slate-900'} space-y-2.5 transition`;
-
-                card.innerHTML = `
-                    <div class="flex items-center justify-between gap-2">
-                        <span class="w-7 h-7 rounded-xl bg-emerald-800 text-white text-xs font-bold flex items-center justify-center">
-                            ${ayah.numberInSurah}
-                        </span>
-                        <div class="flex items-center gap-2">
-                            ${ayah.audio ? `
-                                <button type="button" onclick="playSingleAyah('${ayah.audio}')" class="px-3 py-1.5 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-volume-high text-emerald-700"></i>
-                                    <span>Dengar</span>
-                                </button>
-                            ` : ''}
-                            <button type="button" onclick="toggleEvalAyahHafal(${surahNumber}, ${ayah.numberInSurah})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${isPassed ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100'}">
-                                <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-check'}"></i>
-                                <span>${isPassed ? 'Lulus ✓' : 'Tandai Lulus'}</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <p class="arabic-text text-2xl sm:text-3xl text-slate-900 dark:text-white pt-1">
-                        ${ayah.arabic}
-                    </p>
-                    <p class="text-xs italic text-emerald-800 dark:text-emerald-400">${ayah.latin}</p>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${ayah.translation}</p>
-                `;
-                ayahContainer.appendChild(card);
-            });
+            renderEvalAyahContainer(surahData);
         }
 
         function closeEvalSurahAyahView() {
@@ -2148,12 +2323,57 @@
             appState.evaluatingSurahNumber = null;
             document.getElementById('eval-ayah-view').classList.add('hidden');
             document.getElementById('eval-surah-list-view').classList.remove('hidden');
-            renderEvalSurahList();
+
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (student) {
+                renderEvalSurahList(student);
+            }
         }
 
-        function toggleEvalAyahHafal(surahNumber, ayahNumber) {
+        function renderEvalAyahContainer(surahData) {
+            const container = document.getElementById('eval-ayah-container');
             const student = allStudentsCache[appState.evaluatingStudentId];
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            if (!container || !student || !surahData) return;
+
+            const surahNumber = surahData.meta.number;
+            const passedList = (student.ayahHafal && student.ayahHafal[surahNumber]) || [];
+            container.innerHTML = '';
+
+            surahData.ayahs.forEach(ayah => {
+                const isPassed = passedList.includes(ayah.numberInSurah);
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl border ${isPassed ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20' : 'border-sand-200 dark:border-slate-800 bg-white dark:bg-slate-900'} space-y-2.5 transition`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-700 text-white text-xs font-bold flex items-center justify-center">
+                            ${ayah.numberInSurah}
+                        </span>
+                        <div class="flex items-center gap-2">
+                            ${ayah.audio ? `
+                                <button type="button" onclick="playSingleAyah('${ayah.audio}')" class="px-2.5 py-1.5 rounded-xl bg-sand-100 dark:bg-slate-800 hover:bg-emerald-100 text-xs font-semibold text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-volume-high text-emerald-700"></i>
+                                    <span>Dengar</span>
+                                </button>
+                            ` : ''}
+                            <button type="button" onclick="toggleEvalAyahPassed(${surahNumber}, ${ayah.numberInSurah})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${isPassed ? 'bg-emerald-700 text-white' : 'bg-sand-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-emerald-100'}">
+                                <i class="fa-solid ${isPassed ? 'fa-circle-check' : 'fa-check'}"></i>
+                                <span>${isPassed ? 'Lulus ✓' : 'Tandai Lulus'}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="arabic-text text-2xl text-slate-900 dark:text-white pt-1">${ayah.arabic}</p>
+                    <p class="text-xs italic text-emerald-800 dark:text-emerald-400">${ayah.latin}</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${ayah.translation}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleEvalAyahPassed(surahNumber, ayahNumber) {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            const meta = getSurahMeta(surahNumber);
             if (!student || !meta) return;
 
             if (!student.ayahHafal) student.ayahHafal = {};
@@ -2170,28 +2390,26 @@
             const passedCount = student.ayahHafal[surahNumber].length;
             if (passedCount === meta.ayahs) {
                 student.progress[surahNumber] = 'hafal';
-            } else if (passedCount > 0) {
+                document.getElementById('eval-ayah-status-select').value = 'hafal';
+            } else if (passedCount > 0 && (student.progress[surahNumber] || 'belum') === 'belum') {
                 student.progress[surahNumber] = 'proses';
-            } else {
-                delete student.progress[surahNumber];
+                document.getElementById('eval-ayah-status-select').value = 'proses';
             }
 
             student.lastUpdated = formatNowIndonesian();
-            document.getElementById('eval-ayah-status-select').value = student.progress[surahNumber] || 'belum';
-
             allStudentsCache[student.studentId] = student;
             safeStorageSet(DB_USERS_KEY, allStudentsCache);
             syncStudentToGoogleSpreadsheet(student);
-            updateEvalModalSummary();
+            updateEvalModalSummary(student);
 
             const cached = appState.cacheSurahs[surahNumber];
-            if (cached) renderEvalSurahAyahs(cached);
+            if (cached) renderEvalAyahContainer(cached);
         }
 
         function markAllSurahAyahsPassedByPj() {
             const student = allStudentsCache[appState.evaluatingStudentId];
             const surahNumber = appState.evaluatingSurahNumber;
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
             if (!student || !meta) return;
 
             if (!student.ayahHafal) student.ayahHafal = {};
@@ -2206,58 +2424,207 @@
             allStudentsCache[student.studentId] = student;
             safeStorageSet(DB_USERS_KEY, allStudentsCache);
             syncStudentToGoogleSpreadsheet(student);
-            updateEvalModalSummary();
+            updateEvalModalSummary(student);
 
             const cached = appState.cacheSurahs[surahNumber];
-            if (cached) renderEvalSurahAyahs(cached);
-            showToast(`Seluruh ayat QS. ${meta.name} diluluskan!`);
+            if (cached) renderEvalAyahContainer(cached);
+            showToast(`Seluruh ayat QS. ${meta.name} ditandai Hafal ✓`);
         }
 
         function updateStudentSurahStatusFromEvalAyah(newStatus) {
             const student = allStudentsCache[appState.evaluatingStudentId];
             const surahNumber = appState.evaluatingSurahNumber;
-            const meta = JUZ_30_SURAHS.find(s => s.number === surahNumber);
+            const meta = getSurahMeta(surahNumber);
             if (!student || !meta) return;
 
             if (!student.progress) student.progress = {};
             if (!student.ayahHafal) student.ayahHafal = {};
 
-            if (newStatus === 'belum') {
-                delete student.progress[surahNumber];
-                delete student.ayahHafal[surahNumber];
-            } else {
-                student.progress[surahNumber] = newStatus;
-                if (newStatus === 'hafal') {
-                    student.ayahHafal[surahNumber] = Array.from({ length: meta.ayahs }, (_, i) => i + 1);
-                }
+            student.progress[surahNumber] = newStatus;
+            if (newStatus === 'hafal') {
+                student.ayahHafal[surahNumber] = Array.from({ length: meta.ayahs }, (_, i) => i + 1);
+            } else if (newStatus === 'belum') {
+                student.ayahHafal[surahNumber] = [];
             }
 
             student.lastUpdated = formatNowIndonesian();
             allStudentsCache[student.studentId] = student;
             safeStorageSet(DB_USERS_KEY, allStudentsCache);
             syncStudentToGoogleSpreadsheet(student);
-            updateEvalModalSummary();
+            updateEvalModalSummary(student);
 
             const cached = appState.cacheSurahs[surahNumber];
-            if (cached) renderEvalSurahAyahs(cached);
+            if (cached) renderEvalAyahContainer(cached);
             showToast(`Status QS. ${meta.name} diperbarui`);
         }
 
+        function saveTeacherFeedbackForStudent() {
+            const student = allStudentsCache[appState.evaluatingStudentId];
+            if (!student) return;
+
+            const feedbackText = document.getElementById('eval-teacher-feedback-input').value.trim();
+            student.teacherFeedback = feedbackText;
+            student.teacherFeedbackDate = feedbackText ? formatNowIndonesian() : '';
+            student.lastUpdated = formatNowIndonesian();
+
+            allStudentsCache[student.studentId] = student;
+            safeStorageSet(DB_USERS_KEY, allStudentsCache);
+            syncStudentToGoogleSpreadsheet(student);
+            showToast('Catatan evaluasi guru berhasil disimpan');
+        }
+
         // ========================================================================
-        // 9. INISIALISASI APLIKASI SAAT HALAMAN SELESAI DIMUAT
+        // 9. MODAL TAMBAH SURAH MANUAL OLEH GURU (114 SURAH AL-QUR'AN)
         // ========================================================================
-        window.onload = function () {
-            applyDarkMode();
-            initializeActiveSession();
-            syncFromGoogleSpreadsheet(true).then(() => {
-                if (currentSession && currentSession.role === 'guru') {
-                    renderGuruStudentTable();
-                } else if (currentSession && currentSession.role === 'pj') {
-                    renderPjStudentTable();
-                } else if (currentSession && currentSession.role === 'siswa') {
-                    loadSiswaWorkspace();
+        function openGuruAddSurahModal() {
+            appState.guruSurahModalFilter = 'ALL';
+            const searchInput = document.getElementById('guru-search-quran-surah');
+            if (searchInput) searchInput.value = '';
+            updateAllTotalSurahLabels();
+            setGuruSurahModalFilter('ALL');
+            document.getElementById('guru-add-surah-modal').classList.remove('hidden');
+        }
+
+        function closeGuruAddSurahModal() {
+            document.getElementById('guru-add-surah-modal').classList.add('hidden');
+        }
+
+        function setGuruSurahModalFilter(filter) {
+            appState.guruSurahModalFilter = filter;
+            ['ALL', 'CUSTOM'].forEach(f => {
+                const btn = document.getElementById(`guru-surah-filter-${f}`);
+                if (!btn) return;
+                if (f === filter) {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 text-white transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 border border-sand-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition';
                 }
             });
+            renderGuruQuranSurahSearchList();
+        }
+
+        function renderGuruQuranSurahSearchList() {
+            const listEl = document.getElementById('guru-quran-surah-list');
+            if (!listEl) return;
+
+            const query = (document.getElementById('guru-search-quran-surah').value || '').toLowerCase().trim();
+            const customSet = new Set((customSurahsCache || []).map(Number));
+            const baseJuz30Set = new Set(JUZ_30_SURAHS.map(s => s.number));
+
+            const filtered = ALL_QURAN_SURAHS.filter(surah => {
+                const matchFilter = appState.guruSurahModalFilter === 'ALL' || customSet.has(surah.number);
+                const matchQuery =
+                    !query ||
+                    surah.name.toLowerCase().includes(query) ||
+                    surah.meaning.toLowerCase().includes(query) ||
+                    String(surah.number) === query;
+                return matchFilter && matchQuery;
+            });
+
+            listEl.innerHTML = '';
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="py-10 text-center text-xs text-slate-400">
+                        Tidak ada surah Al-Qur'an yang sesuai dengan pencarian.
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(surah => {
+                const isBaseJuz30 = baseJuz30Set.has(surah.number);
+                const isCustomAdded = customSet.has(surah.number);
+
+                const item = document.createElement('div');
+                item.className = `p-3.5 rounded-2xl border ${isCustomAdded ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/40 dark:bg-emerald-950/20' : 'border-sand-200 dark:border-slate-800 bg-white dark:bg-slate-900'} flex items-center justify-between gap-3 transition`;
+
+                let actionBtnHtml = '';
+                if (isBaseJuz30) {
+                    actionBtnHtml = `<span class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-sand-100 dark:bg-slate-800 text-slate-500">Juz 30 (Bawaan)</span>`;
+                } else if (isCustomAdded) {
+                    actionBtnHtml = `
+                        <button type="button" onclick="toggleCustomSurahByGuru(${surah.number})" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-rose-600 text-white transition flex items-center gap-1.5 group">
+                            <i class="fa-solid fa-check"></i>
+                            <span>Aktif (Klik Hapus)</span>
+                        </button>
+                    `;
+                } else {
+                    actionBtnHtml = `
+                        <button type="button" onclick="toggleCustomSurahByGuru(${surah.number})" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-700 hover:text-white transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Tambahkan</span>
+                        </button>
+                    `;
+                }
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 font-extrabold text-xs flex items-center justify-center shrink-0">
+                            ${surah.number}
+                        </div>
+                        <div>
+                            <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <span>${surah.name}</span>
+                                <span class="arabic-text text-base font-bold text-emerald-800 dark:text-emerald-400">${surah.arabic}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400">${surah.meaning} • ${surah.ayahs} Ayat • ${surah.type}</p>
+                        </div>
+                    </div>
+                    <div class="shrink-0">
+                        ${actionBtnHtml}
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        function toggleCustomSurahByGuru(surahNumber) {
+            const num = Number(surahNumber);
+            const meta = getSurahMeta(num);
+            if (!meta) return;
+
+            const currentList = (customSurahsCache || []).map(Number);
+            const idx = currentList.indexOf(num);
+
+            if (idx >= 0) {
+                currentList.splice(idx, 1);
+                showToast(`QS. ${meta.name} dihapus dari daftar surah tambahan`, 'info');
+            } else {
+                currentList.push(num);
+                currentList.sort((a, b) => a - b);
+                showToast(`QS. ${meta.name} berhasil ditambahkan ke Nilai Tasmi', PJ Siswa & Siswa!`);
+            }
+
+            customSurahsCache = currentList;
+            safeStorageSet(DB_CUSTOM_SURAHS_KEY, customSurahsCache);
+            syncCustomSurahsToGoogleSpreadsheet();
+
+            updateAllTotalSurahLabels();
+            renderGuruQuranSurahSearchList();
+            renderGuruStudentTable();
+
+            // Jika modal Nilai Tasmi' sedang terbuka, langsung perbarui daftar surahnya
+            if (appState.evaluatingStudentId && allStudentsCache[appState.evaluatingStudentId]) {
+                const student = allStudentsCache[appState.evaluatingStudentId];
+                updateEvalModalSummary(student);
+                renderEvalSurahList(student);
+            }
+        }
+
+        // ========================================================================
+        // 10. INISIALISASI APLIKASI SAAT HALAMAN DIMUAT
+        // ========================================================================
+        window.onload = async function () {
+            applyDarkMode();
+            updateAllTotalSurahLabels();
+            initializeActiveSession();
+
+            await syncFromGoogleSpreadsheet(true);
+            updateAllTotalSurahLabels();
+            if (currentSession) {
+                initializeActiveSession();
+            }
         };
     </script>
 </body>
